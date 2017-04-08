@@ -5,6 +5,8 @@
  */
 package mvcsmallproject;
 
+import mvcsmallproject.controllers.ClientController;
+
 /**
  *
  * @author vincentdu
@@ -16,6 +18,7 @@ public class MVCSmallProject {
      */
     public static void main(String[] args) {
         // TODO code application logic here
+        ClientController clientController = new ClientController();
     }
     
 }
