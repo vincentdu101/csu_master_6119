@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package mvcsmallproject.models;
+package models;
 
 /**
  *
@@ -11,12 +11,9 @@ package mvcsmallproject.models;
  */
 public interface ModelInterface {
     
-    public boolean isDeleted();
-    
     public int getId();
-    
-    public void setDeleted(boolean deleted);
     
     public String printInfo();
     
+    public String printViewInfo();
 }

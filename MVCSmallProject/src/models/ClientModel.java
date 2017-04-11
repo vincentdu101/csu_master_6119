@@ -3,25 +3,24 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package mvcsmallproject.models;
+package models;
 
 /**
  *
  * @author vincentdu
  */
-public class MovieModel implements ModelInterface {
+public class ClientModel implements ModelInterface {
     
     private boolean deleted;
     private int id;
-    private String title;
+    private String name;
     
-    public MovieModel(int id, String title, boolean deleted) {
+    public ClientModel(int id, String name, boolean deleted) {
         this.id = id;
-        this.title = title;
+        this.name = name;
         this.deleted = deleted;
     }
-    
-    @Override
+   
     public boolean isDeleted() {
         return deleted;        
     };
@@ -31,15 +30,14 @@ public class MovieModel implements ModelInterface {
         return id;
     };
     
-    public String getTitle() {
-        return title;
+    public String getName() {
+        return name;
     };
     
-    public void setTitle(String title) {
-        this.title = title;
+    public void setName(String name) {
+        this.name = name;
     };
-    
-    @Override
+   
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
     };
@@ -47,7 +45,13 @@ public class MovieModel implements ModelInterface {
     @Override 
     public String printInfo() {
         String deletedValue = deleted ? "1" : "0";
-        return id + ";" + title + ";" + deletedValue;
+        return id + ";" + name + ";" + deletedValue;
+    }
+    
+    @Override
+    public String printViewInfo() {
+        return "ID: " + id + "\n" + "Name: " + name +
+                "\nDeleted: " + deleted; 
     }
     
 }

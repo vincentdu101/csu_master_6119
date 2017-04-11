@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package mvcsmallproject.controllers;
+package controllers;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -11,11 +11,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import mvcsmallproject.models.ClientModel;
+import models.ClientModel;
 
 /**
  *
@@ -23,7 +24,7 @@ import mvcsmallproject.models.ClientModel;
  */
 public class ClientController {
     
-    private String fileName = "src/mvcsmallproject/files/clients.txt";
+    private String fileName = "src/files/clients.txt";
     private List<ClientModel> clientModels;
     private int lastId;
     
@@ -52,8 +53,10 @@ public class ClientController {
         clientModels = new ArrayList<>();
         
         try (Stream<String> stream = Files.lines(Paths.get(fileName))) {
-            while(stream.iterator().hasNext()) {
-                String [] item = stream.iterator().next().split(";");
+            Iterator textIterator = stream.iterator();
+            
+            while(textIterator.hasNext()) {
+                String [] item = textIterator.next().toString().split(";");
                 int id = Integer.parseInt(item[0]);
                 boolean deleted = item[2].equals("1");
                 clientModels.add(new ClientModel(id, item[1], deleted));
@@ -83,9 +86,10 @@ public class ClientController {
     }
     
     public Optional<ClientModel> findClientByFirstAndLastName(String firstName, String lastName) {
-        String name = firstName + " " + lastName;
+        String name = lastName == null ? firstName : firstName + " " + lastName;
+        
         for (ClientModel client : clientModels) {
-            if (client.getName().contains(name)) {
+            if (client.getName().matches(name)) {
                 return Optional.of(client);
             }
         }

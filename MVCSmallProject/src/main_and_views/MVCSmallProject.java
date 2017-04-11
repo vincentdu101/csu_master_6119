@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package mvcsmallproject;
+package main_and_views;
 
-import mvcsmallproject.controllers.ClientController;
+import controllers.ClientController;
+import models.ClientModel;
 
 /**
  *
@@ -19,6 +20,12 @@ public class MVCSmallProject {
     public static void main(String[] args) {
         // TODO code application logic here
         ClientController clientController = new ClientController();
+        for(ClientModel client : clientController.getClients()) {
+            System.out.println(client.printViewInfo());
+        }
+        clientController.createClient("Katie");
+        ClientModel client = clientController.findClientByFirstAndLastName("Katie", null).get();
+        System.out.println(client.printViewInfo());
     }
     
 }
