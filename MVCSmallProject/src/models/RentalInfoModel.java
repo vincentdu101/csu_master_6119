@@ -5,7 +5,8 @@
  */
 package models;
 
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 /**
  *
@@ -16,14 +17,20 @@ public class RentalInfoModel implements RentalModelInterface {
     private int id;
     private int clientId;
     private int movieId;
-    private Date dateOut;
-    private Date dateIn;
+    private LocalDate rentDate;
+    private LocalDate returnDate;
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM dd yyyy");
     
-    public RentalInfoModel(int id, int clientId, int movieId, Date dateOut) {
+    public RentalInfoModel(int id, int clientId, int movieId, LocalDate rentDate, LocalDate returnDate) {
         this.id = id;
         this.clientId = clientId;
         this.movieId = movieId;
-        this.dateOut = dateOut;
+        this.rentDate = rentDate;
+        this.returnDate = returnDate;
+    }
+    
+    private String outputDate(LocalDate date) {
+        return date.format(formatter);
     }
     
     public int getId() {
@@ -38,16 +45,23 @@ public class RentalInfoModel implements RentalModelInterface {
         return movieId;
     }
     
-    public Date getDateOut() {
-        return dateOut;
+    public LocalDate getRentDate() {
+        return rentDate;
     }
     
-    public Date getDateIn() {
-        return dateIn;
+    public LocalDate getReturnDate() {
+        return returnDate;
     }
     
-    public void setDateIn(Date dateIn) {
-        this.dateIn = dateIn;
+    public void setReturnDate(LocalDate returnDate) {
+        this.returnDate = returnDate;
+    }
+    
+    @Override 
+    public String printInfo() {
+        String returnString = returnDate == null ? "" : outputDate(returnDate);
+        String rentString = rentDate == null ? "" : outputDate(rentDate);
+        return id + ";" + clientId + ";" + movieId + ";" + rentString + ";" + returnString;
     }
     
 }

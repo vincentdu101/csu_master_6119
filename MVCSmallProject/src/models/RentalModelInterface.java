@@ -5,7 +5,7 @@
  */
 package models;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 /**
  *
@@ -19,10 +19,12 @@ public interface RentalModelInterface {
     
     public int getMovieId();
     
-    public Date getDateOut();
+    public LocalDate getRentDate();
     
-    public Date getDateIn();
+    public LocalDate getReturnDate();
     
-    public void setDateIn(Date dateIn);
+    public void setReturnDate(LocalDate returnDate);
+    
+    public String printInfo();
     
 }

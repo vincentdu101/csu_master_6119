@@ -67,8 +67,28 @@ public class MovieController {
         }
     }
     
-    public List<MovieModel> getMovies() {
-        return movieModels;
+    public MovieModel findMovie(int movieId) {
+        return movieModels.stream()
+            .filter(e -> e.getId() == movieId)
+            .findFirst().get();
+    }
+    
+    public List<MovieModel> getAllMovies() {
+        List<MovieModel> movies = movieModels.stream()
+            .filter(e -> e.isRented())
+            .collect(Collectors.toList());
+        
+        movies.addAll(movieModels.stream()
+            .filter(e -> !e.isRented())
+            .collect(Collectors.toList()));
+        
+        return movies;
+    }
+    
+    public List<MovieModel> getRentedMovies() {
+        return  movieModels.stream()
+            .filter(e -> e.isRented())
+            .collect(Collectors.toList());
     }
     
     public void createMovie(String name) {
