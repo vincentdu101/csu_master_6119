@@ -75,6 +75,12 @@ public class MovieController {
             .findFirst().get();
     }
     
+    public MovieModel findMovieByTitle(String title) {
+        return movieModels.stream()
+            .filter(e -> e.getTitle().equals(title))
+            .findFirst().get();
+    }
+    
     public List<MovieModel> getAllMovies() {
         List<MovieModel> movies = movieModels.stream()
             .filter(e -> e.isRented())
@@ -95,6 +101,11 @@ public class MovieController {
     
     public void createMovie(String name) {
         try {
+            if (findMovieByTitle(name) != null) {
+                System.out.println("Movie already exists");
+                return;
+            }
+            
             FileWriter fileWriter = new FileWriter(fileName, true);
             BufferedWriter bufferWriter = new BufferedWriter(fileWriter);
 

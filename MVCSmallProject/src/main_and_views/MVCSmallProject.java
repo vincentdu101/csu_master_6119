@@ -7,6 +7,7 @@ package main_and_views;
 
 import controllers.ClientController;
 import controllers.MovieController;
+import javax.swing.SwingUtilities;
 import models.ClientModel;
 import models.MovieModel;
 
@@ -23,6 +24,8 @@ public class MVCSmallProject {
         // TODO code application logic here
         testOutClient();
         testOutMovie();
+        
+        testOutClientMenu();
     }
     
     public static void testOutClient() {
@@ -41,17 +44,24 @@ public class MVCSmallProject {
         for (MovieModel movie : movieController.getAllMovies()) {
             System.out.println(movie.printViewInfo());
         }
-        movieController.createMovie("Titanic");
-        System.out.println("Rented Movies");
-        for (MovieModel movie : movieController.getRentedMovies()) {
-            System.out.println(movie.printViewInfo());
-        }        
+        movieController.createMovie("Titanic");     
         movieController.rentMovie(1);
         MovieModel firstMovie = movieController.findMovie(1);
         System.out.println(firstMovie.printViewInfo());
+        System.out.println("Rented Movies");
+        for (MovieModel movie : movieController.getRentedMovies()) {
+            System.out.println(movie.printViewInfo());
+        }           
         movieController.returnMovie(1);
         firstMovie = movieController.findMovie(1);
         System.out.println(firstMovie.printViewInfo());        
+    }
+    
+    public static void testOutClientMenu() {
+        SwingUtilities.invokeLater(() -> {
+            ClientMainMenu ex = new ClientMainMenu();
+            ex.setVisible(true);
+        });        
     }
     
 }

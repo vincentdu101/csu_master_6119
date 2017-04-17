@@ -71,6 +71,11 @@ public class ClientController {
         return clientModels;
     }
     
+    public Object[][] getTableClients() {
+        return getClients().stream()
+                .map(e -> {e.getID(), e.getName(), e.isDeleted()});
+    }
+    
     public void createClient(String name) {
         try {
             FileWriter fileWriter = new FileWriter(fileName, true);
