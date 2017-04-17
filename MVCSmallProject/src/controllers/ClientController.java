@@ -36,7 +36,7 @@ public class ClientController {
     private void saveToFile(List<ClientModel> clients) {
         try {
             String contents = "";
-            FileWriter fileWriter = new FileWriter(fileName, true);
+            FileWriter fileWriter = new FileWriter(fileName, false);
             BufferedWriter bufferWriter = new BufferedWriter(fileWriter);
 
             for (ClientModel client : clients) {

@@ -37,7 +37,7 @@ public class RentalInfoController {
     private void saveToFile(List<RentalInfoModel> rentalInfoModels) {
         try {
             String contents = "";
-            FileWriter fileWriter = new FileWriter(fileName, true);
+            FileWriter fileWriter = new FileWriter(fileName, false);
             BufferedWriter bufferWriter = new BufferedWriter(fileWriter);
 
             for (RentalInfoModel rental : rentalInfoModels) {

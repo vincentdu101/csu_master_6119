@@ -50,8 +50,9 @@ public class MovieModel implements ModelInterface {
     
     @Override
     public String printViewInfo() {
+        String rentedResponse = rented ? "Rented" : "Available";
         return "ID: " + id + "\n" + "Movie Title: " + title +
-                "\nDeleted: " + rented; 
+                "\nStatus: " + rentedResponse; 
     }
     
 }

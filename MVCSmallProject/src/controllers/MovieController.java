@@ -36,14 +36,16 @@ public class MovieController {
     private void saveToFile(List<MovieModel> movies) {
         try {
             String contents = "";
-            FileWriter fileWriter = new FileWriter(fileName, true);
+            FileWriter fileWriter = new FileWriter(fileName, false);
+            
             BufferedWriter bufferWriter = new BufferedWriter(fileWriter);
 
             for (MovieModel movie : movies) {
                 contents += movie.printInfo() + "\n";
             }
             
-            bufferWriter.write(contents);   
+            bufferWriter.write(contents);  
+            bufferWriter.close();
         } catch(IOException e) {
             e.printStackTrace();
         }
