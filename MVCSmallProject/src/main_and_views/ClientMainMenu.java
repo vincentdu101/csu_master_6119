@@ -9,8 +9,10 @@ import java.awt.Dimension;
 import java.awt.Insets;
 
 import javax.swing.*;
+import javax.swing.table.*;
 import javax.swing.border.EmptyBorder;
 import controllers.ClientController;
+import java.awt.event.*;
 
 /**
  *
@@ -28,12 +30,21 @@ public class ClientMainMenu extends JFrame {
     private void initUI() {
 
         JPanel panel = new JPanel();
-        JTable table = new JTable(clientController.getTableClients(), clientColumnNames());
+        DefaultTableModel model = new DefaultTableModel();
+        JTable table = new JTable(model);
         
+        model.addColumn("ID");
+        model.addColumn("Name");
+        model.addColumn("Active Status");
+        model.addColumn("Actions");
         
+        clientController.addClientRows(model, (ActionEvent event) -> {
+            System.exit(0);
+        });
         
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBorder(new EmptyBorder(new Insets(40, 60, 40, 60)));
+        panel.add(table);
         panel.add(new JButton("Add"));
         add(panel);
 
@@ -42,10 +53,6 @@ public class ClientMainMenu extends JFrame {
         setTitle("RigidArea");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-    }
-    
-    private String[] clientColumnNames() {
-        return new String[]("ID", "Name", "Active");
     }
     
 }

@@ -5,6 +5,7 @@
  */
 package controllers;
 
+import java.awt.event.ActionListener;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -16,6 +17,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import javax.swing.JButton;
+import javax.swing.table.DefaultTableModel;
 import models.ClientModel;
 
 /**
@@ -49,6 +52,15 @@ public class ClientController {
         }
     }
     
+    private Object[] createClientRow(ClientModel client, ActionListener listener) {
+        String active = client.isDeleted() ? "Not Active" : "Active";
+        JButton selectBtn = new JButton("Select");
+        selectBtn.addActionListener(listener);
+        return new Object[]{
+            client.getId(), client.getName(), active, selectBtn
+        };
+    }
+    
     public void loadClients() {
         clientModels = new ArrayList<>();
         
@@ -71,9 +83,10 @@ public class ClientController {
         return clientModels;
     }
     
-    public Object[][] getTableClients() {
-        return getClients().stream()
-                .map(e -> {e.getID(), e.getName(), e.isDeleted()});
+    public void addClientRows(DefaultTableModel model, ActionListener listener) {
+        for(ClientModel client : getClients()) {
+            model.addRow(createClientRow(client, listener));
+        }
     }
     
     public void createClient(String name) {

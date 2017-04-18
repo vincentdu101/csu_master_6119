@@ -16,6 +16,8 @@ import models.MovieModel;
  * @author vincentdu
  */
 public class MVCSmallProject {
+    
+    private static ClientController clientController;
 
     /**
      * @param args the command line arguments
@@ -29,7 +31,7 @@ public class MVCSmallProject {
     }
     
     public static void testOutClient() {
-        ClientController clientController = new ClientController();
+        clientController = new ClientController();
         for(ClientModel client : clientController.getClients()) {
             System.out.println(client.printViewInfo());
         }
@@ -59,7 +61,7 @@ public class MVCSmallProject {
     
     public static void testOutClientMenu() {
         SwingUtilities.invokeLater(() -> {
-            ClientMainMenu ex = new ClientMainMenu();
+            ClientMainMenu ex = new ClientMainMenu(clientController);
             ex.setVisible(true);
         });        
     }
