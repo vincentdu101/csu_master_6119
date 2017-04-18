@@ -12,6 +12,7 @@ import javax.swing.*;
 import javax.swing.table.*;
 import javax.swing.border.EmptyBorder;
 import controllers.ClientController;
+import java.awt.Component;
 import java.awt.event.*;
 
 /**
@@ -28,23 +29,24 @@ public class ClientMainMenu extends JFrame {
     }
 
     private void initUI() {
-
         JPanel panel = new JPanel();
-        DefaultTableModel model = new DefaultTableModel();
-        JTable table = new JTable(model);
+        DefaultTableModel dm = new DefaultTableModel();
+        dm.setDataVector(clientController.addClientRows(), generateClientTitleRow());
+
+        JTable table = new JTable(dm);
         
-        model.addColumn("ID");
-        model.addColumn("Name");
-        model.addColumn("Active Status");
-        model.addColumn("Actions");
+        table.getColumn("Use Client").setCellRenderer(new ClientButtonRenderer());
+        table.getColumn("Use Client").setCellEditor(
+            new ClientButtonEditor(new JCheckBox()));
         
-        clientController.addClientRows(model, (ActionEvent event) -> {
-            System.exit(0);
-        });
+        table.getColumn("Delete").setCellRenderer(new ClientButtonRenderer());
+        table.getColumn("Delete").setCellEditor(
+            new ClientButtonEditor(new JCheckBox()));        
         
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setBorder(new EmptyBorder(new Insets(40, 60, 40, 60)));
-        panel.add(table);
+        JScrollPane scroll = new JScrollPane(table);
+        getContentPane().add(scroll);
+        setSize(400, 400);
+        setVisible(true);
         panel.add(new JButton("Add"));
         add(panel);
 
@@ -53,6 +55,10 @@ public class ClientMainMenu extends JFrame {
         setTitle("RigidArea");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
+    }
+    
+    private Object[] generateClientTitleRow() {
+        return new Object[] { "ID", "Name", "Active", "Use Client", "Delete" };
     }
     
 }

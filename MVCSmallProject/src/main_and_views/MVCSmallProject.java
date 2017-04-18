@@ -18,12 +18,15 @@ import models.MovieModel;
 public class MVCSmallProject {
     
     private static ClientController clientController;
+    private static MainConfig mainConfig;
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         // TODO code application logic here
+        mainConfig = new MainConfig();
+        
         testOutClient();
         testOutMovie();
         
@@ -31,7 +34,7 @@ public class MVCSmallProject {
     }
     
     public static void testOutClient() {
-        clientController = new ClientController();
+        clientController = new ClientController(mainConfig);
         for(ClientModel client : clientController.getClients()) {
             System.out.println(client.printViewInfo());
         }

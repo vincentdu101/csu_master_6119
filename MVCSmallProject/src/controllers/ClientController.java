@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.swing.JButton;
 import javax.swing.table.DefaultTableModel;
+import main_and_views.MainConfig;
 import models.ClientModel;
 
 /**
@@ -30,9 +31,11 @@ public class ClientController {
     private String fileName = "src/files/clients.txt";
     private List<ClientModel> clientModels;
     private int lastId;
+    private MainConfig mainConfig;
     
     
-    public ClientController() {
+    public ClientController(MainConfig mainConfig) {
+        this.mainConfig = mainConfig;
         loadClients();
     }
     
@@ -50,15 +53,6 @@ public class ClientController {
         } catch(IOException e) {
             e.printStackTrace();
         }
-    }
-    
-    private Object[] createClientRow(ClientModel client, ActionListener listener) {
-        String active = client.isDeleted() ? "Not Active" : "Active";
-        JButton selectBtn = new JButton("Select");
-        selectBtn.addActionListener(listener);
-        return new Object[]{
-            client.getId(), client.getName(), active, selectBtn
-        };
     }
     
     public void loadClients() {
@@ -83,10 +77,19 @@ public class ClientController {
         return clientModels;
     }
     
-    public void addClientRows(DefaultTableModel model, ActionListener listener) {
-        for(ClientModel client : getClients()) {
-            model.addRow(createClientRow(client, listener));
+    public Object[][] addClientRows() {
+        List<ClientModel> clients = getClients();
+        
+        Object[][] tableContents = new Object[clients.size()][5];
+        for (int i=0 ; i < clients.size() ; i++) {
+            ClientModel client = clients.get(i);
+            tableContents[i][0] = Integer.toString(client.getId());
+            tableContents[i][1] = client.getName();
+            tableContents[i][2] = client.isDeleted() ? "Not Active" : "Active";
+            tableContents[i][3] = "Select";
+            tableContents[i][4] = "Delete";
         }
+        return tableContents;
     }
     
     public void createClient(String name) {
