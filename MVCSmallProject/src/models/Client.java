@@ -9,13 +9,13 @@ package models;
  *
  * @author vincentdu
  */
-public class ClientModel implements ModelInterface {
+public class Client implements ResourceInterface {
     
     private boolean deleted;
     private int id;
     private String name;
     
-    public ClientModel(int id, String name, boolean deleted) {
+    public Client(int id, String name, boolean deleted) {
         this.id = id;
         this.name = name;
         this.deleted = deleted;

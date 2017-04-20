@@ -9,13 +9,13 @@ package models;
  *
  * @author vincentdu
  */
-public class MovieModel implements ModelInterface {
+public class Movie implements ResourceInterface {
     
     private boolean rented;
     private int id;
     private String title;
     
-    public MovieModel(int id, String title, boolean rented) {
+    public Movie(int id, String title, boolean rented) {
         this.id = id;
         this.title = title;
         this.rented = rented;

@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import models.MovieModel;
+import models.Movie;
 
 /**
  *
@@ -25,7 +25,7 @@ import models.MovieModel;
 public class MovieController {
     
     private String fileName = "src/files/movies.txt";
-    private List<MovieModel> movieModels;
+    private List<Movie> movies;
     private int lastId;
     
     
@@ -33,14 +33,14 @@ public class MovieController {
         loadMovies();
     }
     
-    private void saveToFile(List<MovieModel> movies) {
+    private void saveToFile(List<Movie> movies) {
         try {
             String contents = "";
             FileWriter fileWriter = new FileWriter(fileName, false);
             
             BufferedWriter bufferWriter = new BufferedWriter(fileWriter);
 
-            for (MovieModel movie : movies) {
+            for (Movie movie : movies) {
                 contents += movie.printInfo() + "\n";
             }
             
@@ -52,7 +52,7 @@ public class MovieController {
     }
     
     public void loadMovies() {
-        movieModels = new ArrayList<>();
+        movies = new ArrayList<>();
         
         try (Stream<String> stream = Files.lines(Paths.get(fileName))) {
             Iterator textIterator = stream.iterator();
@@ -61,7 +61,7 @@ public class MovieController {
                 String [] item = textIterator.next().toString().split(";");
                 int id = Integer.parseInt(item[0]);
                 boolean deleted = item[2].equals("1");
-                movieModels.add(new MovieModel(id, item[1], deleted));
+                movies.add(new Movie(id, item[1], deleted));
                 lastId = id;
             };
         } catch(IOException e) {
@@ -69,32 +69,32 @@ public class MovieController {
         }
     }
     
-    public MovieModel findMovie(int movieId) {
-        return movieModels.stream()
+    public Movie findMovie(int movieId) {
+        return movies.stream()
             .filter(e -> e.getId() == movieId)
             .findFirst().get();
     }
     
-    public MovieModel findMovieByTitle(String title) {
-        return movieModels.stream()
+    public Movie findMovieByTitle(String title) {
+        return movies.stream()
             .filter(e -> e.getTitle().equals(title))
             .findFirst().get();
     }
     
-    public List<MovieModel> getAllMovies() {
-        List<MovieModel> movies = movieModels.stream()
+    public List<Movie> getAllMovies() {
+        List<Movie> allMovies = movies.stream()
             .filter(e -> e.isRented())
             .collect(Collectors.toList());
         
-        movies.addAll(movieModels.stream()
+        allMovies.addAll(movies.stream()
             .filter(e -> !e.isRented())
             .collect(Collectors.toList()));
         
         return movies;
     }
     
-    public List<MovieModel> getRentedMovies() {
-        return  movieModels.stream()
+    public List<Movie> getRentedMovies() {
+        return  movies.stream()
             .filter(e -> e.isRented())
             .collect(Collectors.toList());
     }
@@ -109,8 +109,8 @@ public class MovieController {
             FileWriter fileWriter = new FileWriter(fileName, true);
             BufferedWriter bufferWriter = new BufferedWriter(fileWriter);
 
-            MovieModel movie = new MovieModel(++lastId, name, false);
-            movieModels.add(movie);
+            Movie movie = new Movie(++lastId, name, false);
+            movies.add(movie);
             
             bufferWriter.write(movie.printInfo());   
         } catch(IOException e) {
@@ -119,29 +119,29 @@ public class MovieController {
     }
     
     public void rentMovie(int id) {
-        for (int i = 0; i < movieModels.size(); i++) {
-            MovieModel movie = movieModels.get(i);
+        for (int i = 0; i < movies.size(); i++) {
+            Movie movie = movies.get(i);
             if (movie.getId() == id) {
                 movie.setRented(true);
-                movieModels.set(i, movie);
+                movies.set(i, movie);
                 break;
             }
         }
         
-        saveToFile(movieModels);
+        saveToFile(movies);
     }
     
     public void returnMovie(int id) {
-        for (int i = 0; i < movieModels.size(); i++) {
-            MovieModel movie = movieModels.get(i);
+        for (int i = 0; i < movies.size(); i++) {
+            Movie movie = movies.get(i);
             if (movie.getId() == id) {
                 movie.setRented(false);
-                movieModels.set(i, movie);
+                movies.set(i, movie);
                 break;
             }
         }
         
-        saveToFile(movieModels);
+        saveToFile(movies);
     }    
     
 }

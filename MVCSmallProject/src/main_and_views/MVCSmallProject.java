@@ -8,8 +8,8 @@ package main_and_views;
 import controllers.ClientController;
 import controllers.MovieController;
 import javax.swing.SwingUtilities;
-import models.ClientModel;
-import models.MovieModel;
+import models.Client;
+import models.Movie;
 
 /**
  *
@@ -35,26 +35,27 @@ public class MVCSmallProject {
     
     public static void testOutClient() {
         clientController = new ClientController(mainConfig);
-        for(ClientModel client : clientController.getClients()) {
+        for(Client client : clientController.getClients()) {
             System.out.println(client.printViewInfo());
         }
         clientController.createClient("Katie");
-        ClientModel client = clientController.findClientByFirstAndLastName("Katie", null).get();
+        clientController.deleteClient(3);
+        Client client = clientController.findClientByFirstAndLastName("Katie", null).get();
         System.out.println(client.printViewInfo());
     }
     
     public static void testOutMovie() {
         MovieController movieController = new MovieController();
         System.out.println("All Movies");
-        for (MovieModel movie : movieController.getAllMovies()) {
+        for (Movie movie : movieController.getAllMovies()) {
             System.out.println(movie.printViewInfo());
         }
         movieController.createMovie("Titanic");     
         movieController.rentMovie(1);
-        MovieModel firstMovie = movieController.findMovie(1);
+        Movie firstMovie = movieController.findMovie(1);
         System.out.println(firstMovie.printViewInfo());
         System.out.println("Rented Movies");
-        for (MovieModel movie : movieController.getRentedMovies()) {
+        for (Movie movie : movieController.getRentedMovies()) {
             System.out.println(movie.printViewInfo());
         }           
         movieController.returnMovie(1);
@@ -64,7 +65,7 @@ public class MVCSmallProject {
     
     public static void testOutClientMenu() {
         SwingUtilities.invokeLater(() -> {
-            ClientMainMenu ex = new ClientMainMenu(clientController);
+            ClientView ex = new ClientView(clientController);
             ex.setVisible(true);
         });        
     }

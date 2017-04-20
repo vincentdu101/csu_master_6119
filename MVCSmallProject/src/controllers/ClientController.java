@@ -20,7 +20,7 @@ import java.util.stream.Stream;
 import javax.swing.JButton;
 import javax.swing.table.DefaultTableModel;
 import main_and_views.MainConfig;
-import models.ClientModel;
+import models.Client;
 
 /**
  *
@@ -29,7 +29,7 @@ import models.ClientModel;
 public class ClientController {
     
     private String fileName = "src/files/clients.txt";
-    private List<ClientModel> clientModels;
+    private List<Client> clients;
     private int lastId;
     private MainConfig mainConfig;
     
@@ -39,24 +39,26 @@ public class ClientController {
         loadClients();
     }
     
-    private void saveToFile(List<ClientModel> clients) {
+    private void saveToFile(List<Client> clients) {
         try {
             String contents = "";
             FileWriter fileWriter = new FileWriter(fileName, false);
+            
             BufferedWriter bufferWriter = new BufferedWriter(fileWriter);
 
-            for (ClientModel client : clients) {
+            for (Client client : clients) {
                 contents += client.printInfo() + "\n";
             }
             
-            bufferWriter.write(contents);   
+            bufferWriter.write(contents);  
+            bufferWriter.close();
         } catch(IOException e) {
             e.printStackTrace();
         }
     }
     
     public void loadClients() {
-        clientModels = new ArrayList<>();
+        clients = new ArrayList<>();
         
         try (Stream<String> stream = Files.lines(Paths.get(fileName))) {
             Iterator textIterator = stream.iterator();
@@ -65,7 +67,7 @@ public class ClientController {
                 String [] item = textIterator.next().toString().split(";");
                 int id = Integer.parseInt(item[0]);
                 boolean deleted = item[2].equals("1");
-                clientModels.add(new ClientModel(id, item[1], deleted));
+                clients.add(new Client(id, item[1], deleted));
                 lastId = id;
             };
         } catch(IOException e) {
@@ -73,23 +75,21 @@ public class ClientController {
         }
     }
     
-    public List<ClientModel> getClients() {
-        return clientModels;
+    public List<Client> getClients() {
+        return clients;
     }
     
     public Object[][] addClientRows() {
-        List<ClientModel> clients = getClients();
+        List<Client> clients = getClients();
         
-        Object[][] tableContents = new Object[clients.size()][5];
+        Object[][] tableContents = new Object[clients.size()][3];
         for (int i=0 ; i < clients.size() ; i++) {
-            ClientModel client = clients.get(i);
+            Client client = clients.get(i);
             tableContents[i][0] = Integer.toString(client.getId());
             tableContents[i][1] = client.getName();
             tableContents[i][2] = client.isDeleted() ? "Not Active" : "Active";
-            tableContents[i][3] = "Select";
-            tableContents[i][4] = "Delete";
         }
-        return tableContents;
+        return tableContents;        
     }
     
     public void createClient(String name) {
@@ -97,19 +97,20 @@ public class ClientController {
             FileWriter fileWriter = new FileWriter(fileName, true);
             BufferedWriter bufferWriter = new BufferedWriter(fileWriter);
 
-            ClientModel client = new ClientModel(++lastId, name, false);
-            clientModels.add(client);
+            Client client = new Client(++lastId, name, false);
+            clients.add(client);
             
-            bufferWriter.write(client.printInfo());   
+            bufferWriter.write(client.printInfo()); 
+            bufferWriter.close();
         } catch(IOException e) {
             e.printStackTrace();
         }
     }
     
-    public Optional<ClientModel> findClientByFirstAndLastName(String firstName, String lastName) {
+    public Optional<Client> findClientByFirstAndLastName(String firstName, String lastName) {
         String name = lastName == null ? firstName : firstName + " " + lastName;
         
-        for (ClientModel client : clientModels) {
+        for (Client client : clients) {
             if (client.getName().matches(name)) {
                 return Optional.of(client);
             }
@@ -118,16 +119,16 @@ public class ClientController {
     }
     
     public void deleteClient(int id) {
-        for (int i = 0; i < clientModels.size(); i++) {
-            ClientModel client = clientModels.get(i);
+        for (int i = 0; i < clients.size(); i++) {
+            Client client = clients.get(i);
             if (client.getId() == id) {
                 client.setDeleted(true);
-                clientModels.set(i, client);
+                clients.set(i, client);
                 break;
             }
         }
         
-        saveToFile(clientModels);
+        saveToFile(clients);
     }
     
 }

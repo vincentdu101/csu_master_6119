@@ -16,8 +16,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import models.MovieModel;
-import models.RentalInfoModel;
+import models.Movie;
+import models.RentalInfo;
 
 /**
  *
@@ -26,7 +26,7 @@ import models.RentalInfoModel;
 public class RentalInfoController {
     
     private String fileName = "src/files/rental_info.txt";
-    private List<RentalInfoModel> rentalInfoModels;
+    private List<RentalInfo> rentalInfos;
     private int lastId;
     private MovieController movieController;
     
@@ -34,13 +34,13 @@ public class RentalInfoController {
         this.movieController = movieController;
     }
     
-    private void saveToFile(List<RentalInfoModel> rentalInfoModels) {
+    private void saveToFile(List<RentalInfo> rentalInfoModels) {
         try {
             String contents = "";
             FileWriter fileWriter = new FileWriter(fileName, false);
             BufferedWriter bufferWriter = new BufferedWriter(fileWriter);
 
-            for (RentalInfoModel rental : rentalInfoModels) {
+            for (RentalInfo rental : rentalInfoModels) {
                 contents += rental.printInfo() + "\n";
             }
             
@@ -64,7 +64,7 @@ public class RentalInfoController {
     }
     
     private boolean hasClientReachedLimit(int clientId) {
-        int numberRented = rentalInfoModels
+        int numberRented = rentalInfos
             .stream()
             .filter(e -> e.getClientId() == clientId)
             .filter(e -> e.getReturnDate() == null)
@@ -73,7 +73,7 @@ public class RentalInfoController {
     } 
     
     public void loadRentalInfo() {
-        rentalInfoModels = new ArrayList<>();
+        rentalInfos = new ArrayList<>();
         
         try (Stream<String> stream = Files.lines(Paths.get(fileName))) {
             Iterator textIterator = stream.iterator();
@@ -86,7 +86,7 @@ public class RentalInfoController {
                 LocalDate rentDate = convertToLocalDate(item[3]);
                 LocalDate returnDate = convertToLocalDate(item[4]);
                 
-                rentalInfoModels.add(new RentalInfoModel(id, clientId, movieId, rentDate, returnDate));
+                rentalInfos.add(new RentalInfo(id, clientId, movieId, rentDate, returnDate));
                 lastId = id;
             };
         } catch(IOException e) {
@@ -105,24 +105,24 @@ public class RentalInfoController {
             return;
         }
         
-        rentalInfoModels.add(new RentalInfoModel(
+        rentalInfos.add(new RentalInfo(
             ++lastId, clientId, movieId, LocalDate.now(), null
         ));
         
         movieController.rentMovie(movieId);
-        saveToFile(rentalInfoModels);
+        saveToFile(rentalInfos);
     }
     
     public void returnMovie(int movieId) {
-        for (int i = 0; i < rentalInfoModels.size(); i++) {
-            RentalInfoModel rental = rentalInfoModels.get(i);
+        for (int i = 0; i < rentalInfos.size(); i++) {
+            RentalInfo rental = rentalInfos.get(i);
             if (rental.getMovieId() == movieId) {
                 rental.setReturnDate(LocalDate.now());
-                rentalInfoModels.set(i, rental);
+                rentalInfos.set(i, rental);
                 break;
             }
         }
         movieController.returnMovie(movieId);
-        saveToFile(rentalInfoModels);
+        saveToFile(rentalInfos);
     }     
 }

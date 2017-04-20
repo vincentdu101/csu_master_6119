@@ -5,15 +5,26 @@
  */
 package models;
 
+import java.time.LocalDate;
+
 /**
  *
  * @author vincentdu
  */
-public interface ModelInterface {
+public interface RentalInfoInterface {
     
     public int getId();
     
+    public int getClientId();
+    
+    public int getMovieId();
+    
+    public LocalDate getRentDate();
+    
+    public LocalDate getReturnDate();
+    
+    public void setReturnDate(LocalDate returnDate);
+    
     public String printInfo();
     
-    public String printViewInfo();
 }

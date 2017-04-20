@@ -12,7 +12,7 @@ import java.time.format.DateTimeFormatter;
  *
  * @author vincentdu
  */
-public class RentalInfoModel implements RentalModelInterface {
+public class RentalInfo implements RentalInfoInterface {
     
     private int id;
     private int clientId;
@@ -21,7 +21,7 @@ public class RentalInfoModel implements RentalModelInterface {
     private LocalDate returnDate;
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM dd yyyy");
     
-    public RentalInfoModel(int id, int clientId, int movieId, LocalDate rentDate, LocalDate returnDate) {
+    public RentalInfo(int id, int clientId, int movieId, LocalDate rentDate, LocalDate returnDate) {
         this.id = id;
         this.clientId = clientId;
         this.movieId = movieId;

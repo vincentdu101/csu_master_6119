@@ -5,8 +5,8 @@
  */
 package main_and_views;
 
-import models.ClientModel;
-import models.MovieModel;
+import models.Client;
+import models.Movie;
 
 /**
  *
@@ -14,16 +14,16 @@ import models.MovieModel;
  */
 public class MainConfig {
     
-    private ClientModel clientChosen;
-    private MovieModel movieChosen;
+    private Client clientChosen;
+    private Movie movieChosen;
     
     public MainConfig() {}
     
-    public void setClientChosen(ClientModel clientChosen) {
+    public void setClientChosen(Client clientChosen) {
         this.clientChosen = clientChosen;
     }
     
-    public ClientModel getClientChosen() {
+    public Client getClientChosen() {
         return clientChosen;
     }
     
