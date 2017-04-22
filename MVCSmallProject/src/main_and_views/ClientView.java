@@ -17,39 +17,55 @@ import java.awt.GridLayout;
 import java.awt.event.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import models.ClientModel;
 
 /**
  *
  * @author vdu
  */
-public class ClientView extends JFrame {
+public class ClientView extends JFrame implements ClientViewObserver {
     
     private ClientController clientController;
+    private ClientModel clientModel;
     private String clientIdChosen;
     
-    public ClientView(ClientController clientController) {
+    public ClientView(ClientController clientController, ClientModel model) {
         this.clientController = clientController;
+        this.clientModel = model;
+        this.clientModel.registerObserver((ClientViewObserver)this);
         initUI();
     }
 
     private void initUI() {
-        JPanel panel = new JPanel();
+        createView(clientController.addClientRows());
+        setTitle("RigidArea");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+    }
+    
+    private Object[] generateClientTitleRow() {
+        return new Object[] { "ID", "Name", "Active" };
+    }
+    
+    private void selectUser(String id) {
+        System.out.println(id);
+    }
+    
+    private void createView(Object[][] data) {
         DefaultTableModel dm = new DefaultTableModel() {
             @Override
             public boolean isCellEditable(int row, int column) {
                return false;
             }
         };
-        dm.setDataVector(clientController.addClientRows(), generateClientTitleRow());
-
-        JTable table = new JTable(dm);
+        dm.setDataVector(data, generateClientTitleRow());        
         
+        JPanel panel = new JPanel();
+        JTable table = new JTable(dm);
         table.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
-            
             public void valueChanged(ListSelectionEvent event) {
                 clientIdChosen = table.getValueAt(table.getSelectedRow(), 0).toString();
             }
-            
         });      
         
         JScrollPane scroll = new JScrollPane(table);
@@ -64,27 +80,28 @@ public class ClientView extends JFrame {
         
         deleteBtn.addActionListener(new ActionListener(){
            public void actionPerformed( ActionEvent event) { 
-               clientController.deleteClient(Integer.parseInt(clientIdChosen)); 
+               int id = Integer.parseInt(clientIdChosen);
+               clientController.deleteClient(id, panel, scroll); 
            }
         });
         
         panel.add(addBtn);
         panel.add(selectBtn);
         panel.add(deleteBtn);
-        add(panel);
-
+        add(panel); 
         pack();
-
-        setTitle("RigidArea");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
     }
     
-    private Object[] generateClientTitleRow() {
-        return new Object[] { "ID", "Name", "Active" };
+    private void removeView(JPanel panel, JScrollPane scroll) {
+        setVisible(false);
+        getContentPane().remove(scroll);
+        remove(panel);
+        pack();
     }
     
-    private void selectUser(String id) {
-        System.out.println(id);
+    @Override
+    public void updateTable(JPanel panel, JScrollPane scroll) {
+        removeView(panel, scroll);
+        createView(clientController.addClientRows());
     }
 }

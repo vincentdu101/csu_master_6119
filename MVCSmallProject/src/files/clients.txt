@@ -1,5 +1,6 @@
 1;vincent;0
 2;alex;0
-3;sam;0
+3;sam;1
 4;stacey;1
 5;ross;1
+6;Katie;0

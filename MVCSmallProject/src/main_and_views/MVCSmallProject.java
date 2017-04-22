@@ -9,6 +9,7 @@ import controllers.ClientController;
 import controllers.MovieController;
 import javax.swing.SwingUtilities;
 import models.Client;
+import models.ClientModel;
 import models.Movie;
 
 /**
@@ -18,28 +19,24 @@ import models.Movie;
 public class MVCSmallProject {
     
     private static ClientController clientController;
-    private static MainConfig mainConfig;
+    private static ClientModel clientModel;
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        mainConfig = new MainConfig();
-        
         testOutClient();
         testOutMovie();
-        
         testOutClientMenu();
     }
     
     public static void testOutClient() {
-        clientController = new ClientController(mainConfig);
+        clientModel = new ClientModel();
+        clientController = new ClientController(clientModel);
         for(Client client : clientController.getClients()) {
             System.out.println(client.printViewInfo());
         }
-        clientController.createClient("Katie");
-        clientController.deleteClient(3);
         Client client = clientController.findClientByFirstAndLastName("Katie", null).get();
         System.out.println(client.printViewInfo());
     }
@@ -65,7 +62,7 @@ public class MVCSmallProject {
     
     public static void testOutClientMenu() {
         SwingUtilities.invokeLater(() -> {
-            ClientView ex = new ClientView(clientController);
+            ClientView ex = new ClientView(clientController, clientModel);
             ex.setVisible(true);
         });        
     }

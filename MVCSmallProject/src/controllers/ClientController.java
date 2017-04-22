@@ -17,10 +17,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.swing.JButton;
-import javax.swing.table.DefaultTableModel;
-import main_and_views.MainConfig;
+import javax.swing.*;
 import models.Client;
+import models.ClientModel;
 
 /**
  *
@@ -31,15 +30,15 @@ public class ClientController {
     private String fileName = "src/files/clients.txt";
     private List<Client> clients;
     private int lastId;
-    private MainConfig mainConfig;
+    private ClientModel clientModel;
     
     
-    public ClientController(MainConfig mainConfig) {
-        this.mainConfig = mainConfig;
+    public ClientController(ClientModel clientModel) {
+        this.clientModel = clientModel;
         loadClients();
     }
     
-    private void saveToFile(List<Client> clients) {
+    private void saveToFile(List<Client> clients, JPanel panel, JScrollPane scroll) {
         try {
             String contents = "";
             FileWriter fileWriter = new FileWriter(fileName, false);
@@ -50,6 +49,7 @@ public class ClientController {
                 contents += client.printInfo() + "\n";
             }
             
+            clientModel.notifyTableObservers(panel, scroll);
             bufferWriter.write(contents);  
             bufferWriter.close();
         } catch(IOException e) {
@@ -92,19 +92,30 @@ public class ClientController {
         return tableContents;        
     }
     
-    public void createClient(String name) {
+    public void createClient(String name, JPanel panel, JScrollPane scroll) {
         try {
+            if (findByName(name).isPresent()) {
+                return;
+            }
+            
             FileWriter fileWriter = new FileWriter(fileName, true);
             BufferedWriter bufferWriter = new BufferedWriter(fileWriter);
 
             Client client = new Client(++lastId, name, false);
             clients.add(client);
             
+            clientModel.notifyTableObservers(panel, scroll);
             bufferWriter.write(client.printInfo()); 
             bufferWriter.close();
         } catch(IOException e) {
             e.printStackTrace();
         }
+    }
+    
+    public Optional<Client> findByName(String name) {
+        return clients.stream()
+                .filter(e -> e.getName().equals(name))
+                .findFirst();
     }
     
     public Optional<Client> findClientByFirstAndLastName(String firstName, String lastName) {
@@ -118,7 +129,7 @@ public class ClientController {
         return Optional.empty();
     }
     
-    public void deleteClient(int id) {
+    public void deleteClient(int id, JPanel panel, JScrollPane scroll) {        
         for (int i = 0; i < clients.size(); i++) {
             Client client = clients.get(i);
             if (client.getId() == id) {
@@ -128,7 +139,7 @@ public class ClientController {
             }
         }
         
-        saveToFile(clients);
+        saveToFile(clients, panel, scroll);
     }
     
 }
