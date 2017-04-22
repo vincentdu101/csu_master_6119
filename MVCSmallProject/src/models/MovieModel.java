@@ -9,28 +9,28 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import main_and_views.ClientViewObserver;
+import main_and_views.MovieViewObserver;
 
 /**
  *
  * @author vincentdu
  */
-public class ClientModel {
+public class MovieModel {
     
-    List<ClientViewObserver> observers = new ArrayList<>();
+    List<MovieViewObserver> observers = new ArrayList<>();
     
-    public ClientModel() {
+    public MovieModel() {
         
     }
     
-    public void registerObserver(ClientViewObserver observer) {
+    public void registerObserver(MovieViewObserver observer) {
         observers.add(observer);
     }
     
     public void notifyTableObservers(Object[][] data, JPanel panel, JScrollPane scroll) {
-        for (ClientViewObserver observer : observers) {
+        for (MovieViewObserver observer : observers) {
             observer.updateTable(data, panel, scroll);
         }
-    }
+    }    
     
 }

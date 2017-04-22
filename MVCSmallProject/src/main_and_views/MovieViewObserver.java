@@ -5,13 +5,14 @@
  */
 package main_and_views;
 
-import javax.swing.*;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 /**
  *
  * @author vincentdu
  */
-public interface ClientViewObserver {
+public interface MovieViewObserver {
     
     public void updateTable(Object[][] data, JPanel panel, JScrollPane scroll);
     

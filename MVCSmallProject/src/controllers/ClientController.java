@@ -49,7 +49,7 @@ public class ClientController {
                 contents += client.printInfo() + "\n";
             }
             
-            clientModel.notifyTableObservers(panel, scroll);
+            clientModel.notifyTableObservers(addClientRows(getClients()), panel, scroll);
             bufferWriter.write(contents);  
             bufferWriter.close();
         } catch(IOException e) {
@@ -79,9 +79,12 @@ public class ClientController {
         return clients;
     }
     
-    public Object[][] addClientRows() {
-        List<Client> clients = getClients();
-        
+    public void searchClient(String text, JPanel panel, JScrollPane scroll) {
+        List<Client> clients = findByName(text);
+        clientModel.notifyTableObservers(addClientRows(clients), panel, scroll);
+    }
+    
+    public Object[][] addClientRows(List<Client> clients) {
         Object[][] tableContents = new Object[clients.size()][3];
         for (int i=0 ; i < clients.size() ; i++) {
             Client client = clients.get(i);
@@ -94,7 +97,7 @@ public class ClientController {
     
     public void createClient(String name, JPanel panel, JScrollPane scroll) {
         try {
-            if (findByName(name).isPresent()) {
+            if (findByName(name).size() > 0) {
                 return;
             }
             
@@ -104,7 +107,7 @@ public class ClientController {
             Client client = new Client(++lastId, name, false);
             clients.add(client);
             
-            clientModel.notifyTableObservers(panel, scroll);
+            clientModel.notifyTableObservers(addClientRows(getClients()), panel, scroll);
             bufferWriter.write(client.printInfo()); 
             bufferWriter.close();
         } catch(IOException e) {
@@ -112,10 +115,10 @@ public class ClientController {
         }
     }
     
-    public Optional<Client> findByName(String name) {
+    public List<Client> findByName(String name) {
         return clients.stream()
                 .filter(e -> e.getName().equals(name))
-                .findFirst();
+                .collect(Collectors.toList());
     }
     
     public Optional<Client> findClientByFirstAndLastName(String firstName, String lastName) {

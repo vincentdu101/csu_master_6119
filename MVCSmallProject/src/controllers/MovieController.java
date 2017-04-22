@@ -17,6 +17,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import models.Movie;
+import models.MovieModel;
+import javax.swing.*;
 
 /**
  *
@@ -27,13 +29,14 @@ public class MovieController {
     private String fileName = "src/files/movies.txt";
     private List<Movie> movies;
     private int lastId;
+    private MovieModel movieModel;
     
-    
-    public MovieController() {
+    public MovieController(MovieModel movieModel) {
+        this.movieModel = movieModel;
         loadMovies();
     }
     
-    private void saveToFile(List<Movie> movies) {
+    private void saveToFile(List<Movie> movies, JPanel panel, JScrollPane scroll) {
         try {
             String contents = "";
             FileWriter fileWriter = new FileWriter(fileName, false);
@@ -44,6 +47,7 @@ public class MovieController {
                 contents += movie.printInfo() + "\n";
             }
             
+            movieModel.notifyTableObservers(addMovieRows(getAllMovies()), panel, scroll);
             bufferWriter.write(contents);  
             bufferWriter.close();
         } catch(IOException e) {
@@ -93,13 +97,24 @@ public class MovieController {
         return movies;
     }
     
+    public Object[][] addMovieRows(List<Movie> movies) {
+        Object[][] tableContents = new Object[movies.size()][3];
+        for (int i=0 ; i < movies.size() ; i++) {
+            Movie movie = movies.get(i);
+            tableContents[i][0] = Integer.toString(movie.getId());
+            tableContents[i][1] = movie.getTitle();
+            tableContents[i][2] = movie.isRented() ? "Rented" : "Available";
+        }
+        return tableContents;        
+    }    
+    
     public List<Movie> getRentedMovies() {
         return  movies.stream()
             .filter(e -> e.isRented())
             .collect(Collectors.toList());
     }
     
-    public void createMovie(String name) {
+    public void createMovie(String name, JPanel panel, JScrollPane scroll) {
         try {
             if (findMovieByTitle(name) != null) {
                 System.out.println("Movie already exists");
@@ -112,13 +127,14 @@ public class MovieController {
             Movie movie = new Movie(++lastId, name, false);
             movies.add(movie);
             
+            movieModel.notifyTableObservers(addMovieRows(getAllMovies()), panel, scroll);
             bufferWriter.write(movie.printInfo());   
         } catch(IOException e) {
             e.printStackTrace();
         }
     }
     
-    public void rentMovie(int id) {
+    public void rentMovie(int id, JPanel panel, JScrollPane scroll) {
         for (int i = 0; i < movies.size(); i++) {
             Movie movie = movies.get(i);
             if (movie.getId() == id) {
@@ -128,10 +144,10 @@ public class MovieController {
             }
         }
         
-        saveToFile(movies);
+        saveToFile(movies, panel, scroll);
     }
     
-    public void returnMovie(int id) {
+    public void returnMovie(int id, JPanel panel, JScrollPane scroll) {
         for (int i = 0; i < movies.size(); i++) {
             Movie movie = movies.get(i);
             if (movie.getId() == id) {
@@ -141,7 +157,7 @@ public class MovieController {
             }
         }
         
-        saveToFile(movies);
+        saveToFile(movies, panel, scroll);
     }    
     
 }

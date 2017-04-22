@@ -11,6 +11,7 @@ import javax.swing.SwingUtilities;
 import models.Client;
 import models.ClientModel;
 import models.Movie;
+import models.MovieModel;
 
 /**
  *
@@ -20,6 +21,9 @@ public class MVCSmallProject {
     
     private static ClientController clientController;
     private static ClientModel clientModel;
+    
+    private static MovieController movieController;
+    private static MovieModel movieModel;
 
     /**
      * @param args the command line arguments
@@ -34,6 +38,7 @@ public class MVCSmallProject {
     public static void testOutClient() {
         clientModel = new ClientModel();
         clientController = new ClientController(clientModel);
+        
         for(Client client : clientController.getClients()) {
             System.out.println(client.printViewInfo());
         }
@@ -42,20 +47,21 @@ public class MVCSmallProject {
     }
     
     public static void testOutMovie() {
-        MovieController movieController = new MovieController();
+        movieModel = new MovieModel();
+        movieController = new MovieController(movieModel);
         System.out.println("All Movies");
         for (Movie movie : movieController.getAllMovies()) {
             System.out.println(movie.printViewInfo());
         }
-        movieController.createMovie("Titanic");     
-        movieController.rentMovie(1);
+//        movieController.createMovie("Titanic");     
+//        movieController.rentMovie(1);
         Movie firstMovie = movieController.findMovie(1);
         System.out.println(firstMovie.printViewInfo());
         System.out.println("Rented Movies");
         for (Movie movie : movieController.getRentedMovies()) {
             System.out.println(movie.printViewInfo());
         }           
-        movieController.returnMovie(1);
+//        movieController.returnMovie(1);
         firstMovie = movieController.findMovie(1);
         System.out.println(firstMovie.printViewInfo());        
     }

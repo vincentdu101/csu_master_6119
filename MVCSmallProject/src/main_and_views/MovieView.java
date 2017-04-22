@@ -5,46 +5,48 @@
  */
 package main_and_views;
 
+import controllers.MovieController;
 import java.awt.Dimension;
-import java.awt.Insets;
-
-import javax.swing.*;
-import javax.swing.table.*;
-import javax.swing.border.EmptyBorder;
-import controllers.ClientController;
-import java.awt.Component;
 import java.awt.GridLayout;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import models.ClientModel;
+import javax.swing.table.DefaultTableModel;
+import models.MovieModel;
 
 /**
  *
- * @author vdu
+ * @author vincentdu
  */
-public class ClientView extends JFrame implements ClientViewObserver {
+public class MovieView extends JFrame implements MovieViewObserver{
     
-    private ClientController clientController;
-    private ClientModel clientModel;
-    private String clientIdChosen;
+    private MovieController movieController;
+    private MovieModel movieModel;
+    private String movieIdChosen;
     
-    public ClientView(ClientController clientController, ClientModel model) {
-        this.clientController = clientController;
-        this.clientModel = model;
-        this.clientModel.registerObserver((ClientViewObserver)this);
+    public MovieView(MovieController movieController, MovieModel model) {
+        this.movieController = movieController;
+        this.movieModel = model;
+        this.movieModel.registerObserver((MovieViewObserver)this);
         initUI();
     }
 
     public void initUI() {
-        createView(clientController.addClientRows(clientController.getClients()));
-        setTitle("RigidArea");
+        createView(movieController.addMovieRows(movieController.getAllMovies()));
+        setTitle("Movies");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
     }
     
     private Object[] generateClientTitleRow() {
-        return new Object[] { "ID", "Name", "Active" };
+        return new Object[] { "ID", "Title", "Active" };
     }
     
     private void selectClient(String id) {
@@ -63,7 +65,7 @@ public class ClientView extends JFrame implements ClientViewObserver {
         JTable table = new JTable(dm);
         table.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
             public void valueChanged(ListSelectionEvent event) {
-                clientIdChosen = table.getValueAt(table.getSelectedRow(), 0).toString();
+                movieIdChosen = table.getValueAt(table.getSelectedRow(), 0).toString();
             }
         });      
         
@@ -81,30 +83,30 @@ public class ClientView extends JFrame implements ClientViewObserver {
         JButton addBtn = new JButton("Add");
         JButton searchBtn = new JButton("Search");
         JButton selectBtn = new JButton("Select");
-        JButton deleteBtn = new JButton("Delete");
+        JButton rentBtn = new JButton("Rent");
 
         addBtn.addActionListener(new ActionListener(){
            public void actionPerformed( ActionEvent event) { 
-               clientController.createClient(text.getText(), panel, scroll);
+               movieController.createMovie(text.getText(), panel, scroll);
            }
         });
 
         searchBtn.addActionListener(new ActionListener(){
            public void actionPerformed( ActionEvent event) { 
-               clientController.searchClient(text.getText(), panel, scroll);
+//               movieController.searchClient(text.getText(), panel, scroll);
            }
         });
         
         selectBtn.addActionListener(new ActionListener(){
            public void actionPerformed( ActionEvent event) { 
-               selectClient(clientIdChosen);
+//               selectClient(clientIdChosen);
            }
         });
         
-        deleteBtn.addActionListener(new ActionListener(){
+        rentBtn.addActionListener(new ActionListener(){
            public void actionPerformed( ActionEvent event) { 
-               int id = Integer.parseInt(clientIdChosen);
-               clientController.deleteClient(id, panel, scroll); 
+               int id = Integer.parseInt(movieIdChosen);
+               movieController.rentMovie(id, panel, scroll); 
            }
         });
         
@@ -112,7 +114,7 @@ public class ClientView extends JFrame implements ClientViewObserver {
         panel.add(addBtn);
         panel.add(searchBtn);
         panel.add(selectBtn);
-        panel.add(deleteBtn);  
+        panel.add(rentBtn);  
         return panel;
     }
     
@@ -134,5 +136,6 @@ public class ClientView extends JFrame implements ClientViewObserver {
     public void updateTable(Object[][] data, JPanel panel, JScrollPane scroll) {
         removeView(panel, scroll);
         createView(data);
-    }
+    }    
+    
 }

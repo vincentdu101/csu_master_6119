@@ -4,3 +4,4 @@
 4;stacey;1
 5;ross;1
 6;Katie;0
+7;james;0
