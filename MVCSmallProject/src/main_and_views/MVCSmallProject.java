@@ -32,44 +32,10 @@ public class MVCSmallProject {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
-//        testOutClient();
-//        testOutMovie();
-        testOutClientMenu();
+        setupSystemComponents();
     }
     
-    public static void testOutClient() {
-        clientModel = new ClientModel();
-//        clientController = new ClientController(clientModel);
-        
-        for(Client client : clientController.getClients()) {
-            System.out.println(client.printViewInfo());
-        }
-        Client client = clientController.findClientByFirstAndLastName("Katie", null).get();
-        System.out.println(client.printViewInfo());
-    }
-    
-    public static void testOutMovie() {
-        movieModel = new MovieModel();
-//        movieController = new MovieController(movieModel);
-        System.out.println("All Movies");
-        for (Movie movie : movieController.getAllMovies()) {
-            System.out.println(movie.printViewInfo());
-        }
-//        movieController.createMovie("Titanic");     
-//        movieController.rentMovie(1);
-        Movie firstMovie = movieController.findMovie(1);
-        System.out.println(firstMovie.printViewInfo());
-        System.out.println("Rented Movies");
-        for (Movie movie : movieController.getRentedMovies()) {
-            System.out.println(movie.printViewInfo());
-        }           
-//        movieController.returnMovie(1);
-        firstMovie = movieController.findMovie(1);
-        System.out.println(firstMovie.printViewInfo());        
-    }
-    
-    public static void testOutClientMenu() {
+    public static void setupSystemComponents() {
         SwingUtilities.invokeLater(() -> {
             clientModel = new ClientModel();            
             movieModel = new MovieModel();
@@ -80,9 +46,6 @@ public class MVCSmallProject {
             
             clientController.initializeView();
             movieController.initializeView();
-            
-//            MovieView mv = new MovieView(movieController, movieModel);
-            
         });        
     }
     

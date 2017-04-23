@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.swing.*;
 import main_and_views.ClientView;
+import main_and_views.ControllerInterface;
 import models.Client;
 import models.ClientModel;
 import models.MovieModel;
@@ -30,7 +31,7 @@ import models.MovieModel;
  *
  * @author vincentdu
  */
-public class ClientController {
+public class ClientController implements ControllerInterface {
     
     private String fileName = "src/files/clients.txt";
     private List<Client> clients;
@@ -42,7 +43,7 @@ public class ClientController {
     public ClientController(ClientModel clientModel, MovieModel movieModel) {
         this.clientModel = clientModel;
         this.movieModel = movieModel;
-        loadClients();
+        loadResources();
     }
     
     private void saveToFile(List<Client> clients, JPanel panel, JScrollPane scroll) {
@@ -75,7 +76,8 @@ public class ClientController {
         movieModel.notifyViewObserver(client);
     }   
     
-    public void loadClients() {
+    @Override
+    public void loadResources() {
         clients = new ArrayList<>();
         
         try (Stream<String> stream = Files.lines(Paths.get(fileName))) {
@@ -159,17 +161,6 @@ public class ClientController {
         return clients.stream()
                 .filter(e -> e.getId() == id)
                 .collect(Collectors.toList());
-    }
-    
-    public Optional<Client> findClientByFirstAndLastName(String firstName, String lastName) {
-        String name = lastName == null ? firstName : firstName + " " + lastName;
-        
-        for (Client client : clients) {
-            if (client.getName().matches(name)) {
-                return Optional.of(client);
-            }
-        }
-        return Optional.empty();
     }
     
     public void deleteClient(int id, JPanel panel, JScrollPane scroll) {        

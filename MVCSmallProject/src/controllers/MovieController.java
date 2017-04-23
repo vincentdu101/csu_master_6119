@@ -22,6 +22,7 @@ import java.util.stream.Stream;
 import models.Movie;
 import models.MovieModel;
 import javax.swing.*;
+import main_and_views.ControllerInterface;
 import main_and_views.MovieView;
 import models.Client;
 import models.ClientModel;
@@ -31,7 +32,7 @@ import models.RentalInfo;
  *
  * @author vincentdu
  */
-public class MovieController {
+public class MovieController implements ControllerInterface {
     
     private String fileName = "src/files/movies.txt";
     private List<Movie> movies;
@@ -47,7 +48,7 @@ public class MovieController {
         this.movieModel = movieModel;
         this.clientModel = clientModel;
         this.rentalInfoController = rentalInfoController;
-        loadMovies();
+        loadResources();
     }
     
     private void saveToFile(List<Movie> movies, JPanel panel, JScrollPane scroll) {
@@ -79,7 +80,8 @@ public class MovieController {
         clientModel.notifyViewObserver();
     }      
     
-    public void loadMovies() {
+    @Override
+    public void loadResources() {
         movies = new ArrayList<>();
         
         try (Stream<String> stream = Files.lines(Paths.get(fileName))) {

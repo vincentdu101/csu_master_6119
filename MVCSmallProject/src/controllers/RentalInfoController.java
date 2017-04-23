@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import main_and_views.ControllerInterface;
 import models.Client;
 import models.Movie;
 import models.RentalInfo;
@@ -26,7 +27,7 @@ import models.RentalInfo;
  *
  * @author vincentdu
  */
-public class RentalInfoController {
+public class RentalInfoController implements ControllerInterface {
     
     private String fileName = "src/files/rental_info.txt";
     private List<RentalInfo> rentalInfos;
@@ -35,7 +36,7 @@ public class RentalInfoController {
     
     public RentalInfoController(ClientController clientController) {
         this.clientController = clientController;
-        loadRentalInfo();
+        loadResources();
     }   
     
     private void saveToFile(List<RentalInfo> rentalInfoModels) {
@@ -78,7 +79,8 @@ public class RentalInfoController {
         return numberRented >= 3;
     } 
     
-    public void loadRentalInfo() {
+    @Override
+    public void loadResources() {
         rentalInfos = new ArrayList<>();
         
         try (Stream<String> stream = Files.lines(Paths.get(fileName))) {
