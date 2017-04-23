@@ -29,7 +29,7 @@ public class RentalInfo implements RentalInfoInterface {
         this.returnDate = returnDate;
     }
     
-    private String outputDate(LocalDate date) {
+    public String outputDate(LocalDate date) {
         return date.format(formatter);
     }
     

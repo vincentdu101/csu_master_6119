@@ -37,6 +37,7 @@ public class MovieView extends JFrame implements MovieViewObserver{
     private MovieModel movieModel;
     private Client clientSelected;
     private String movieIdChosen;
+    private JLabel status = new JLabel("None");
     
     public MovieView(MovieController movieController, MovieModel model, RentalInfoController rentalInfoController) {
         this.movieController = movieController;
@@ -47,41 +48,46 @@ public class MovieView extends JFrame implements MovieViewObserver{
     }
 
     public void initUI() {
-        createView(movieController.addMovieRows(movieController.getAllMovies()));
+        createView(movieController.addMovieRows(movieController.getAllMovies()), 
+                generateClientTitleRow());
         setTitle("Movies");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
     }
     
     private Object[] generateClientTitleRow() {
-        return new Object[] { "ID", "Title", "Active" };
+        return new Object[] { "ID", "Title", "Active", "Rented By" };
     }
+    
+    private Object[] generateClientDateTitleRow() {
+        return new Object[] { "ID", "Title", "Active", "Rented By", "Date Rented", "Date Returned"};
+    }    
     
     private void selectClient(String id) {
         System.out.println(id);
     }
     
-    private void createView(Object[][] data) {
+    private void createView(Object[][] data, Object[] headers) {
         DefaultTableModel dm = new DefaultTableModel() {
             @Override
             public boolean isCellEditable(int row, int column) {
                return false;
             }
         };
-        dm.setDataVector(data, generateClientTitleRow());        
+        dm.setDataVector(data, headers);        
         
         JTable table = new JTable(dm);
         table.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
             public void valueChanged(ListSelectionEvent event) {
                 movieIdChosen = table.getValueAt(table.getSelectedRow(), 0).toString();
             }
-        });      
+        });           
         
         JScrollPane scroll = new JScrollPane(table);
         getContentPane().add(scroll);
-        setSize(new Dimension(400, 400));
         setVisible(true);
-        setLayout(new GridLayout(2, 2));
+        setLayout(new GridLayout(1, 2));
+        setSize(new Dimension(150, 150));
         
         addPanel(scroll); 
         pack();
@@ -90,29 +96,64 @@ public class MovieView extends JFrame implements MovieViewObserver{
     private JPanel addButtons(JTextField text, JPanel panel, JScrollPane scroll) {
         JButton addBtn = new JButton("Add");
         JButton returnBtn = new JButton("Return");
+        JButton rentedBtn = new JButton("View Rented Movies");
+        JButton viewPastRentals = new JButton("View Movie Past Rentals");
         JButton clientBtn = new JButton("Back to Clients");
         JButton rentBtn = new JButton("Rent");
+        JButton allBtn = new JButton("All Movies");
         JLabel clientChosenLabel = null; 
         
         if (clientSelected != null) {
             clientChosenLabel = new JLabel("Current Client: " + clientSelected.getName());
         }
         
-//        panel.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        
         addBtn.addActionListener(new ActionListener(){
-           public void actionPerformed( ActionEvent event) { 
-               movieController.createMovie(text.getText(), panel, scroll);
-           }
+            public void actionPerformed( ActionEvent event) { 
+                String response = movieController.createMovie(text.getText(), panel, scroll);
+                status.setText(response);
+                status.setVisible(true);
+            }
         });
 
         returnBtn.addActionListener(new ActionListener(){
-           public void actionPerformed( ActionEvent event) { 
-               int id = Integer.parseInt(movieIdChosen);
-               movieController.returnMovie(id, panel, scroll);
-               rentalInfoController.returnMovie(id, clientSelected.getId());
+           public void actionPerformed( ActionEvent event) {
+               if (movieIdChosen != null) {
+                   int id = Integer.parseInt(movieIdChosen);
+                   movieController.returnMovie(id, panel, scroll);
+                   rentalInfoController.returnMovie(id, clientSelected.getId());                   
+               }
            }
         });
+        
+        rentedBtn.addActionListener(new ActionListener(){
+           public void actionPerformed( ActionEvent event) { 
+               movieModel.notifyTableObservers(
+                       movieController.addMovieRows(
+                               movieController.getRentedMovies()
+                       ), panel, scroll
+               );
+           }
+        });
+
+        allBtn.addActionListener(new ActionListener(){
+           public void actionPerformed( ActionEvent event) { 
+               movieModel.notifyTableObservers(
+                       movieController.addMovieRows(
+                               movieController.getAllMovies()
+                       ), panel, scroll
+               );
+           }
+        });
+
+        
+        viewPastRentals.addActionListener(new ActionListener(){
+           public void actionPerformed( ActionEvent event) { 
+               int id = Integer.parseInt(movieIdChosen);
+               removeView(panel, scroll);
+               createView(movieController.addClientMovieHistoricRows(id), 
+                       generateClientDateTitleRow());
+           }
+        });        
         
         clientBtn.addActionListener(new ActionListener(){
            public void actionPerformed( ActionEvent event) { 
@@ -128,20 +169,26 @@ public class MovieView extends JFrame implements MovieViewObserver{
            }
         });
         
+        panel.setLayout (new GridLayout(6, 1)); 
+        if (clientChosenLabel != null) {
+            panel.add(clientChosenLabel);
+        }        
         panel.add(text);
+        panel.add(rentedBtn);
+        panel.add(viewPastRentals);
+        panel.add(allBtn);
         panel.add(addBtn);
         panel.add(rentBtn);
         panel.add(returnBtn);
         panel.add(clientBtn); 
-        if (clientChosenLabel != null) {
-            panel.add(clientChosenLabel);
-        }
         return panel;
     }
     
     private void addPanel(JScrollPane scroll) {
         JPanel panel = new JPanel();
-        JTextField text = new JTextField(10); 
+        JTextField text = new JTextField(10);
+        status.setVisible(false);
+        panel.add(status);        
         addButtons(text, panel, scroll);
         add(panel);
     }
@@ -156,7 +203,7 @@ public class MovieView extends JFrame implements MovieViewObserver{
     @Override
     public void updateTable(Object[][] data, JPanel panel, JScrollPane scroll) {
         removeView(panel, scroll);
-        createView(data);
+        createView(data, generateClientTitleRow());
     }    
     
     @Override

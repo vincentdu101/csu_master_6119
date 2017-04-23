@@ -12,10 +12,13 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import models.Client;
 import models.Movie;
 import models.RentalInfo;
 
@@ -28,8 +31,10 @@ public class RentalInfoController {
     private String fileName = "src/files/rental_info.txt";
     private List<RentalInfo> rentalInfos;
     private int lastId;
+    private ClientController clientController;
     
-    public RentalInfoController() {
+    public RentalInfoController(ClientController clientController) {
+        this.clientController = clientController;
         loadRentalInfo();
     }   
     
@@ -105,6 +110,13 @@ public class RentalInfoController {
             .collect(Collectors.toList()).size() > 0;
     }
     
+    public List<RentalInfo> getRentalInfoForMovie(Movie movie) {
+        return rentalInfos.stream()
+                .filter(e -> e.getMovieId() == movie.getId())
+                .sorted((e1, e2) -> e2.getRentDate().compareTo(e1.getRentDate()))
+                .collect(Collectors.toList());
+    }
+    
     public void rentMovie(int movieId, int clientId) {
         if (hasClientReachedLimit(clientId)) {
             System.out.println("User has reached max rentals");
@@ -137,5 +149,25 @@ public class RentalInfoController {
             }
         }
         saveToFile(rentalInfos);
-    }     
+    }   
+    
+    public Map<Integer, Client> getClientRentalMap() {
+        Map<Integer, Client> output = new HashMap<>();
+        
+        for (RentalInfo rental : rentalInfos) {
+            try {
+                int id = rental.getClientId();
+                List<Client> client = clientController.findById(id);
+                if (rental.getReturnDate() == null) {
+                    if (client.size() > 0) {
+                        output.put(rental.getMovieId(), client.get(0));
+                    }
+                }                    
+            } catch(Exception ex) {
+                System.out.println(ex.getMessage());
+            }
+        }
+        
+        return output;
+    }
 }

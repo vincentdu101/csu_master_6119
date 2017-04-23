@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -112,10 +113,10 @@ public class ClientController {
         return tableContents;        
     }
     
-    public void createClient(String name, JPanel panel, JScrollPane scroll) {
+    public String createClient(String name, JPanel panel, JScrollPane scroll) {
         try {
-            if (findByName(name).size() > 0) {
-                return;
+            if (findExact(name).isPresent()) {
+                return "Client already exists.";
             }
             
             FileWriter fileWriter = new FileWriter(fileName, true);
@@ -125,11 +126,18 @@ public class ClientController {
             clients.add(client);
             
             clientModel.notifyTableObservers(addClientRows(getClients()), panel, scroll);
-            bufferWriter.write(client.printInfo()); 
+            bufferWriter.write("\n" + client.printInfo()); 
             bufferWriter.close();
         } catch(IOException e) {
             e.printStackTrace();
         }
+        return name + " successfully added";
+    }
+    
+    public Optional<Client> findExact(String name) {
+        return clients.stream()
+                .filter(e -> e.getName().equals(name))
+                .findFirst();        
     }
     
     public List<Client> findByName(String name) {
@@ -139,7 +147,7 @@ public class ClientController {
         Matcher m = namePattern.matcher(name);
         
         if (!m.find()) {
-            return null;
+            return Collections.emptyList();
         }
         
         return clients.stream()

@@ -74,8 +74,8 @@ public class MVCSmallProject {
             clientModel = new ClientModel();            
             movieModel = new MovieModel();
             
-            rentalInfoController = new RentalInfoController();
             clientController = new ClientController(clientModel, movieModel);
+            rentalInfoController = new RentalInfoController(clientController);
             movieController = new MovieController(movieModel, clientModel, rentalInfoController);
             
             clientController.initializeView();

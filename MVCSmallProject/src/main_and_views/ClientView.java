@@ -13,6 +13,7 @@ import javax.swing.table.*;
 import javax.swing.border.EmptyBorder;
 import controllers.ClientController;
 import java.awt.Component;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.*;
 import javax.swing.event.ListSelectionEvent;
@@ -28,6 +29,7 @@ public class ClientView extends JFrame implements ClientViewObserver {
     private ClientController clientController;
     private ClientModel clientModel;
     private String clientIdChosen;
+    private JLabel status = new JLabel("None");
     
     public ClientView(ClientController clientController, ClientModel model) {
         this.clientController = clientController;
@@ -69,7 +71,7 @@ public class ClientView extends JFrame implements ClientViewObserver {
         
         JScrollPane scroll = new JScrollPane(table);
         getContentPane().add(scroll);
-        setSize(new Dimension(400, 400));
+        setSize(new Dimension(150, 150));
         setVisible(true);
         setLayout(new GridLayout(1, 2));
         
@@ -85,7 +87,9 @@ public class ClientView extends JFrame implements ClientViewObserver {
 
         addBtn.addActionListener(new ActionListener(){
            public void actionPerformed( ActionEvent event) { 
-               clientController.createClient(text.getText(), panel, scroll);
+               String response = clientController.createClient(text.getText(), panel, scroll);
+               status.setText(response);
+               status.setVisible(true);
            }
         });
 
@@ -108,6 +112,8 @@ public class ClientView extends JFrame implements ClientViewObserver {
            }
         });
         
+        panel.setLayout (new GridLayout(6, 1)); 
+        panel.setSize(new Dimension(5, 200));
         panel.add(new JLabel("Search will work for only \"First Name Last Name\" format"));
         panel.add(text);
         panel.add(addBtn);
@@ -120,6 +126,8 @@ public class ClientView extends JFrame implements ClientViewObserver {
     private void addPanel(JScrollPane scroll) {
         JPanel panel = new JPanel();
         JTextField text = new JTextField(10); 
+        status.setVisible(false);
+        panel.add(status);
         addButtons(text, panel, scroll);
         add(panel);
     }
