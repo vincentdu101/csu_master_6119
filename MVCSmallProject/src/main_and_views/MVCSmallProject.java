@@ -7,6 +7,7 @@ package main_and_views;
 
 import controllers.ClientController;
 import controllers.MovieController;
+import controllers.RentalInfoController;
 import javax.swing.SwingUtilities;
 import models.Client;
 import models.ClientModel;
@@ -24,20 +25,22 @@ public class MVCSmallProject {
     
     private static MovieController movieController;
     private static MovieModel movieModel;
+    
+    private static RentalInfoController rentalInfoController;
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        testOutClient();
-        testOutMovie();
+//        testOutClient();
+//        testOutMovie();
         testOutClientMenu();
     }
     
     public static void testOutClient() {
         clientModel = new ClientModel();
-        clientController = new ClientController(clientModel);
+//        clientController = new ClientController(clientModel);
         
         for(Client client : clientController.getClients()) {
             System.out.println(client.printViewInfo());
@@ -48,7 +51,7 @@ public class MVCSmallProject {
     
     public static void testOutMovie() {
         movieModel = new MovieModel();
-        movieController = new MovieController(movieModel);
+//        movieController = new MovieController(movieModel);
         System.out.println("All Movies");
         for (Movie movie : movieController.getAllMovies()) {
             System.out.println(movie.printViewInfo());
@@ -68,8 +71,18 @@ public class MVCSmallProject {
     
     public static void testOutClientMenu() {
         SwingUtilities.invokeLater(() -> {
-            ClientView ex = new ClientView(clientController, clientModel);
-            ex.setVisible(true);
+            clientModel = new ClientModel();            
+            movieModel = new MovieModel();
+            
+            rentalInfoController = new RentalInfoController();
+            clientController = new ClientController(clientModel, movieModel);
+            movieController = new MovieController(movieModel, clientModel, rentalInfoController);
+            
+            clientController.initializeView();
+            movieController.initializeView();
+            
+//            MovieView mv = new MovieView(movieController, movieModel);
+            
         });        
     }
     

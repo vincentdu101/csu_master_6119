@@ -7,6 +7,7 @@ package main_and_views;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import models.Client;
 
 /**
  *
@@ -15,5 +16,7 @@ import javax.swing.JScrollPane;
 public interface MovieViewObserver {
     
     public void updateTable(Object[][] data, JPanel panel, JScrollPane scroll);
+    
+    public void updateView(Client client);
     
 }

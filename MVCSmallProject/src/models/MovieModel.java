@@ -33,4 +33,10 @@ public class MovieModel {
         }
     }    
     
+    public void notifyViewObserver(Client client) {
+        for (MovieViewObserver observer : observers) {
+            observer.updateView(client);
+        }        
+    }
+    
 }

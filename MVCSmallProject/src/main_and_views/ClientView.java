@@ -38,7 +38,7 @@ public class ClientView extends JFrame implements ClientViewObserver {
 
     public void initUI() {
         createView(clientController.addClientRows(clientController.getClients()));
-        setTitle("RigidArea");
+        setTitle("Client List");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
     }
@@ -97,7 +97,7 @@ public class ClientView extends JFrame implements ClientViewObserver {
         
         selectBtn.addActionListener(new ActionListener(){
            public void actionPerformed( ActionEvent event) { 
-               selectClient(clientIdChosen);
+               clientController.selectClient(clientIdChosen, panel, scroll);
            }
         });
         
@@ -108,6 +108,7 @@ public class ClientView extends JFrame implements ClientViewObserver {
            }
         });
         
+        panel.add(new JLabel("Search will work for only \"First Name Last Name\" format"));
         panel.add(text);
         panel.add(addBtn);
         panel.add(searchBtn);
@@ -134,5 +135,11 @@ public class ClientView extends JFrame implements ClientViewObserver {
     public void updateTable(Object[][] data, JPanel panel, JScrollPane scroll) {
         removeView(panel, scroll);
         createView(data);
+    }
+    
+    @Override
+    public void updateView() {
+        getContentPane().removeAll();
+        initUI();
     }
 }

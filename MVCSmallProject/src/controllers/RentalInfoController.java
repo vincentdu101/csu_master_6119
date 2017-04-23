@@ -28,23 +28,24 @@ public class RentalInfoController {
     private String fileName = "src/files/rental_info.txt";
     private List<RentalInfo> rentalInfos;
     private int lastId;
-    private MovieController movieController;
     
-    public RentalInfoController(MovieController movieController) {
-        this.movieController = movieController;
-    }
+    public RentalInfoController() {
+        loadRentalInfo();
+    }   
     
     private void saveToFile(List<RentalInfo> rentalInfoModels) {
         try {
             String contents = "";
             FileWriter fileWriter = new FileWriter(fileName, false);
+            
             BufferedWriter bufferWriter = new BufferedWriter(fileWriter);
 
             for (RentalInfo rental : rentalInfoModels) {
                 contents += rental.printInfo() + "\n";
             }
             
-            bufferWriter.write(contents);   
+            bufferWriter.write(contents);  
+            bufferWriter.close();
         } catch(IOException e) {
             e.printStackTrace();
         }
@@ -57,9 +58,9 @@ public class RentalInfoController {
         
         String[] item = date.split("/");
         return LocalDate.of(
+            Integer.parseInt(item[2]),
             Integer.parseInt(item[0]),
-            Integer.parseInt(item[1]),
-            Integer.parseInt(item[2])    
+            Integer.parseInt(item[1])    
         );
     }
     
@@ -84,7 +85,10 @@ public class RentalInfoController {
                 int clientId = Integer.parseInt(item[1]);
                 int movieId = Integer.parseInt(item[2]);
                 LocalDate rentDate = convertToLocalDate(item[3]);
-                LocalDate returnDate = convertToLocalDate(item[4]);
+                LocalDate returnDate = null;
+                if (item.length == 5) {
+                    returnDate = convertToLocalDate(item[4]);
+                }        
                 
                 rentalInfos.add(new RentalInfo(id, clientId, movieId, rentDate, returnDate));
                 lastId = id;
@@ -94,13 +98,20 @@ public class RentalInfoController {
         }
     }
     
+    public boolean isMovieRented(int movieId) {
+        return rentalInfos.stream()
+            .filter(e -> e.getMovieId() == movieId)
+            .filter(e -> e.getReturnDate() == null)
+            .collect(Collectors.toList()).size() > 0;
+    }
+    
     public void rentMovie(int movieId, int clientId) {
         if (hasClientReachedLimit(clientId)) {
             System.out.println("User has reached max rentals");
             return;
         }
         
-        if (movieController.findMovie(movieId).isRented()) {
+        if (isMovieRented(movieId)) {
             System.out.println("Movie has been rented");
             return;
         }
@@ -109,20 +120,22 @@ public class RentalInfoController {
             ++lastId, clientId, movieId, LocalDate.now(), null
         ));
         
-        movieController.rentMovie(movieId);
         saveToFile(rentalInfos);
     }
     
-    public void returnMovie(int movieId) {
+    public void returnMovie(int movieId, int clientId) {
         for (int i = 0; i < rentalInfos.size(); i++) {
             RentalInfo rental = rentalInfos.get(i);
-            if (rental.getMovieId() == movieId) {
+            boolean movieCorrect = rental.getMovieId() == movieId;
+            boolean clientCorrect = rental.getClientId() == clientId;
+            boolean notReturned = rental.getReturnDate() == null;
+            
+            if (movieCorrect && clientCorrect && notReturned) {
                 rental.setReturnDate(LocalDate.now());
                 rentalInfos.set(i, rental);
                 break;
             }
         }
-        movieController.returnMovie(movieId);
         saveToFile(rentalInfos);
     }     
 }

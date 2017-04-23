@@ -19,6 +19,9 @@ import java.util.stream.Stream;
 import models.Movie;
 import models.MovieModel;
 import javax.swing.*;
+import main_and_views.MovieView;
+import models.Client;
+import models.ClientModel;
 
 /**
  *
@@ -29,10 +32,15 @@ public class MovieController {
     private String fileName = "src/files/movies.txt";
     private List<Movie> movies;
     private int lastId;
+    private ClientModel clientModel;
     private MovieModel movieModel;
+    private MovieView movieView;
+    private RentalInfoController rentalInfoController;
     
-    public MovieController(MovieModel movieModel) {
+    public MovieController(MovieModel movieModel, ClientModel clientModel, RentalInfoController rentalInfoController) {
         this.movieModel = movieModel;
+        this.clientModel = clientModel;
+        this.rentalInfoController = rentalInfoController;
         loadMovies();
     }
     
@@ -54,6 +62,16 @@ public class MovieController {
             e.printStackTrace();
         }
     }
+    
+    public void initializeView() {
+        movieView = new MovieView(this, movieModel, rentalInfoController);
+        movieView.setVisible(false);
+    }
+    
+    public void backToClients(JPanel panel, JScrollPane scroll) {
+        movieView.setVisible(false);
+        clientModel.notifyViewObserver();
+    }      
     
     public void loadMovies() {
         movies = new ArrayList<>();

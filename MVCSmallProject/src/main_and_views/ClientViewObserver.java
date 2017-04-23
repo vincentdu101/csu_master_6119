@@ -15,4 +15,6 @@ public interface ClientViewObserver {
     
     public void updateTable(Object[][] data, JPanel panel, JScrollPane scroll);
     
+    public void updateView();
+    
 }

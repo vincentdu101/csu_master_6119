@@ -17,9 +17,9 @@ public class RentalInfo implements RentalInfoInterface {
     private int id;
     private int clientId;
     private int movieId;
-    private LocalDate rentDate;
-    private LocalDate returnDate;
-    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM dd yyyy");
+    private LocalDate rentDate = null;
+    private LocalDate returnDate = null;
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
     
     public RentalInfo(int id, int clientId, int movieId, LocalDate rentDate, LocalDate returnDate) {
         this.id = id;

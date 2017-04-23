@@ -6,12 +6,16 @@
 package main_and_views;
 
 import controllers.MovieController;
+import controllers.RentalInfoController;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -19,6 +23,7 @@ import javax.swing.JTextField;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
+import models.Client;
 import models.MovieModel;
 
 /**
@@ -28,13 +33,16 @@ import models.MovieModel;
 public class MovieView extends JFrame implements MovieViewObserver{
     
     private MovieController movieController;
+    private RentalInfoController rentalInfoController;
     private MovieModel movieModel;
+    private Client clientSelected;
     private String movieIdChosen;
     
-    public MovieView(MovieController movieController, MovieModel model) {
+    public MovieView(MovieController movieController, MovieModel model, RentalInfoController rentalInfoController) {
         this.movieController = movieController;
         this.movieModel = model;
         this.movieModel.registerObserver((MovieViewObserver)this);
+        this.rentalInfoController = rentalInfoController;
         initUI();
     }
 
@@ -73,7 +81,7 @@ public class MovieView extends JFrame implements MovieViewObserver{
         getContentPane().add(scroll);
         setSize(new Dimension(400, 400));
         setVisible(true);
-        setLayout(new GridLayout(1, 2));
+        setLayout(new GridLayout(2, 2));
         
         addPanel(scroll); 
         pack();
@@ -81,25 +89,34 @@ public class MovieView extends JFrame implements MovieViewObserver{
     
     private JPanel addButtons(JTextField text, JPanel panel, JScrollPane scroll) {
         JButton addBtn = new JButton("Add");
-        JButton searchBtn = new JButton("Search");
-        JButton selectBtn = new JButton("Select");
+        JButton returnBtn = new JButton("Return");
+        JButton clientBtn = new JButton("Back to Clients");
         JButton rentBtn = new JButton("Rent");
-
+        JLabel clientChosenLabel = null; 
+        
+        if (clientSelected != null) {
+            clientChosenLabel = new JLabel("Current Client: " + clientSelected.getName());
+        }
+        
+//        panel.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        
         addBtn.addActionListener(new ActionListener(){
            public void actionPerformed( ActionEvent event) { 
                movieController.createMovie(text.getText(), panel, scroll);
            }
         });
 
-        searchBtn.addActionListener(new ActionListener(){
+        returnBtn.addActionListener(new ActionListener(){
            public void actionPerformed( ActionEvent event) { 
-//               movieController.searchClient(text.getText(), panel, scroll);
+               int id = Integer.parseInt(movieIdChosen);
+               movieController.returnMovie(id, panel, scroll);
+               rentalInfoController.returnMovie(id, clientSelected.getId());
            }
         });
         
-        selectBtn.addActionListener(new ActionListener(){
+        clientBtn.addActionListener(new ActionListener(){
            public void actionPerformed( ActionEvent event) { 
-//               selectClient(clientIdChosen);
+               movieController.backToClients(panel, scroll);
            }
         });
         
@@ -107,14 +124,18 @@ public class MovieView extends JFrame implements MovieViewObserver{
            public void actionPerformed( ActionEvent event) { 
                int id = Integer.parseInt(movieIdChosen);
                movieController.rentMovie(id, panel, scroll); 
+               rentalInfoController.rentMovie(id, clientSelected.getId());
            }
         });
         
         panel.add(text);
         panel.add(addBtn);
-        panel.add(searchBtn);
-        panel.add(selectBtn);
-        panel.add(rentBtn);  
+        panel.add(rentBtn);
+        panel.add(returnBtn);
+        panel.add(clientBtn); 
+        if (clientChosenLabel != null) {
+            panel.add(clientChosenLabel);
+        }
         return panel;
     }
     
@@ -137,5 +158,12 @@ public class MovieView extends JFrame implements MovieViewObserver{
         removeView(panel, scroll);
         createView(data);
     }    
+    
+    @Override
+    public void updateView(Client client) {
+        getContentPane().removeAll();
+        this.clientSelected = client;
+        initUI();
+    }
     
 }

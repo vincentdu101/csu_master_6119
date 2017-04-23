@@ -15,11 +15,15 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.swing.*;
+import main_and_views.ClientView;
 import models.Client;
 import models.ClientModel;
+import models.MovieModel;
 
 /**
  *
@@ -31,10 +35,12 @@ public class ClientController {
     private List<Client> clients;
     private int lastId;
     private ClientModel clientModel;
+    private ClientView clientView;
+    private MovieModel movieModel;
     
-    
-    public ClientController(ClientModel clientModel) {
+    public ClientController(ClientModel clientModel, MovieModel movieModel) {
         this.clientModel = clientModel;
+        this.movieModel = movieModel;
         loadClients();
     }
     
@@ -56,6 +62,17 @@ public class ClientController {
             e.printStackTrace();
         }
     }
+    
+    public void initializeView() {
+        clientView = new ClientView(this, clientModel);
+        clientView.setVisible(true);
+    }
+    
+    public void selectClient(String id, JPanel panel, JScrollPane scroll) {
+        Client client = findById(Integer.parseInt(id)).get(0);
+        clientView.setVisible(false);
+        movieModel.notifyViewObserver(client);
+    }   
     
     public void loadClients() {
         clients = new ArrayList<>();
@@ -116,8 +133,23 @@ public class ClientController {
     }
     
     public List<Client> findByName(String name) {
+        String pattern = "\\w+\\ \\w+";
+        Pattern namePattern = Pattern.compile(pattern);
+        
+        Matcher m = namePattern.matcher(name);
+        
+        if (!m.find()) {
+            return null;
+        }
+        
         return clients.stream()
                 .filter(e -> e.getName().equals(name))
+                .collect(Collectors.toList());
+    }
+    
+    public List<Client> findById(int id) {
+        return clients.stream()
+                .filter(e -> e.getId() == id)
                 .collect(Collectors.toList());
     }
     

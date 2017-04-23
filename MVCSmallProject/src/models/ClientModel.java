@@ -10,6 +10,7 @@ import java.util.List;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import main_and_views.ClientViewObserver;
+import main_and_views.MovieViewObserver;
 
 /**
  *
@@ -32,5 +33,11 @@ public class ClientModel {
             observer.updateTable(data, panel, scroll);
         }
     }
+    
+    public void notifyViewObserver() {
+        for (ClientViewObserver observer : observers) {
+            observer.updateView();
+        }        
+    }    
     
 }
