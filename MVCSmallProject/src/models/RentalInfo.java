@@ -12,7 +12,7 @@ import java.time.format.DateTimeFormatter;
  *
  * @author vincentdu
  */
-public class RentalInfo implements RentalInfoInterface {
+public class RentalInfo {
     
     private int id;
     private int clientId;
@@ -57,7 +57,6 @@ public class RentalInfo implements RentalInfoInterface {
         this.returnDate = returnDate;
     }
     
-    @Override 
     public String printInfo() {
         String returnString = returnDate == null ? "" : outputDate(returnDate);
         String rentString = rentDate == null ? "" : outputDate(rentDate);
