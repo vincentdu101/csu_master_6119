@@ -28,7 +28,7 @@ public class ClientView extends JFrame implements ClientViewObserver {
     
     private ClientController clientController;
     private ClientModel clientModel;
-    private String clientIdChosen;
+    private String clientIdChosen = null;
     private JLabel status = new JLabel("None");
     
     public ClientView(ClientController clientController, ClientModel model) {
@@ -81,34 +81,53 @@ public class ClientView extends JFrame implements ClientViewObserver {
     
     private JPanel addButtons(JTextField text, JPanel panel, JScrollPane scroll) {
         JButton addBtn = new JButton("Add");
+        JButton allBtn = new JButton("All Clients");
         JButton searchBtn = new JButton("Search");
         JButton selectBtn = new JButton("Select");
         JButton deleteBtn = new JButton("Delete");
 
         addBtn.addActionListener(new ActionListener(){
            public void actionPerformed( ActionEvent event) { 
-               String response = clientController.createClient(text.getText(), panel, scroll);
-               status.setText(response);
-               status.setVisible(true);
+               if (!text.getText().trim().equals("")) {
+                    String response = clientController.createClient(text.getText(), panel, scroll);
+                    status.setText(response);
+                    status.setVisible(true);
+               } else {
+                    status.setText("Name must be First \nName and Last Name.");
+                    status.setVisible(true);
+               }
            }
         });
 
-        searchBtn.addActionListener(new ActionListener(){
+        allBtn.addActionListener(new ActionListener(){
            public void actionPerformed( ActionEvent event) { 
-               clientController.searchClient(text.getText(), panel, scroll);
+               removeView(panel, scroll);
+               createView(clientController.addClientRows(clientController.getClients()));
+           }
+        });
+        
+        searchBtn.addActionListener(new ActionListener(){
+           public void actionPerformed( ActionEvent event) {
+               if (text.getText() != null) {
+                    clientController.searchClient(text.getText(), panel, scroll);
+               }
            }
         });
         
         selectBtn.addActionListener(new ActionListener(){
            public void actionPerformed( ActionEvent event) { 
-               clientController.selectClient(clientIdChosen, panel, scroll);
+               if (clientIdChosen != null) {
+                    clientController.selectClient(clientIdChosen, panel, scroll);
+               }
            }
         });
         
         deleteBtn.addActionListener(new ActionListener(){
            public void actionPerformed( ActionEvent event) { 
-               int id = Integer.parseInt(clientIdChosen);
-               clientController.deleteClient(id, panel, scroll); 
+               if (clientIdChosen != null) {
+                    int id = Integer.parseInt(clientIdChosen);
+                    clientController.deleteClient(id, panel, scroll); 
+               }
            }
         });
         
@@ -117,6 +136,7 @@ public class ClientView extends JFrame implements ClientViewObserver {
         panel.add(new JLabel("Search will work for only \"First Name Last Name\" format"));
         panel.add(text);
         panel.add(addBtn);
+        panel.add(allBtn);
         panel.add(searchBtn);
         panel.add(selectBtn);
         panel.add(deleteBtn);  
@@ -134,6 +154,7 @@ public class ClientView extends JFrame implements ClientViewObserver {
     
     private void removeView(JPanel panel, JScrollPane scroll) {
         setVisible(false);
+        clientIdChosen = null;
         getContentPane().remove(scroll);
         remove(panel);
         pack();

@@ -3,12 +3,17 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/Users/vdu/workspace/experiments/csu_master_6119/MVCSmallProject/src/controllers/RentalInfoController.java</file>
-            <file>file:/Users/vdu/workspace/experiments/csu_master_6119/MVCSmallProject/src/main_and_views/MVCSmallProject.java</file>
-            <file>file:/Users/vdu/workspace/experiments/csu_master_6119/MVCSmallProject/src/controllers/ClientController.java</file>
-            <file>file:/Users/vdu/workspace/experiments/csu_master_6119/MVCSmallProject/src/controllers/MovieController.java</file>
-            <file>file:/Users/vdu/workspace/experiments/csu_master_6119/MVCSmallProject/src/main_and_views/ClientMainMenu.java</file>
-            <file>file:/Users/vdu/workspace/experiments/csu_master_6119/MVCSmallProject/src/files/movies.txt</file>
+            <file>file:/Users/vincentdu/Desktop/Development%20Work/csu_classes/6119/MVCSmallProject/src/controllers/ClientController.java</file>
+            <file>file:/Users/vincentdu/Desktop/Development%20Work/csu_classes/6119/MVCSmallProject/src/files/rental_info.txt</file>
+            <file>file:/Users/vincentdu/Desktop/Development%20Work/csu_classes/6119/MVCSmallProject/src/models/Movie.java</file>
+            <file>file:/Users/vincentdu/Desktop/Development%20Work/csu_classes/6119/MVCSmallProject/src/controllers/MovieController.java</file>
+            <file>file:/Users/vincentdu/Desktop/Development%20Work/csu_classes/6119/MVCSmallProject/src/main_and_views/MovieView.java</file>
+            <file>file:/Users/vincentdu/Desktop/Development%20Work/csu_classes/6119/MVCSmallProject/src/main_and_views/MovieViewObserver.java</file>
+            <file>file:/Users/vincentdu/Desktop/Development%20Work/csu_classes/6119/MVCSmallProject/src/files/movies.txt</file>
+            <file>file:/Users/vincentdu/Desktop/Development%20Work/csu_classes/6119/MVCSmallProject/src/files/clients.txt</file>
+            <file>file:/Users/vincentdu/Desktop/Development%20Work/csu_classes/6119/MVCSmallProject/src/models/MovieModel.java</file>
+            <file>file:/Users/vincentdu/Desktop/Development%20Work/csu_classes/6119/MVCSmallProject/src/main_and_views/ClientView.java</file>
+            <file>file:/Users/vincentdu/Desktop/Development%20Work/csu_classes/6119/MVCSmallProject/src/controllers/RentalInfoController.java</file>
         </group>
     </open-files>
 </project-private>

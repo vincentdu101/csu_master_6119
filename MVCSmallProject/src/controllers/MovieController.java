@@ -124,7 +124,7 @@ public class MovieController implements ControllerInterface {
     }
     
     public Object[][] addMovieRows(List<Movie> movies) {
-        Object[][] tableContents = new Object[movies.size()][6];
+        Object[][] tableContents = new Object[movies.size()][4];
         Map<Integer, Client> clientMap = rentalInfoController.getClientRentalMap();
         
         for (int i=0 ; i < movies.size() ; i++) {
@@ -132,6 +132,7 @@ public class MovieController implements ControllerInterface {
             tableContents[i][0] = Integer.toString(movie.getId());
             tableContents[i][1] = movie.getTitle();
             tableContents[i][2] = movie.isRented() ? "Rented" : "Available";
+            
             if (movie.isRented() && clientMap.get(movie.getId()) != null) {
                 tableContents[i][3] = clientMap.get(movie.getId()).getName();
             } else {
@@ -143,25 +144,27 @@ public class MovieController implements ControllerInterface {
     
     public Object[][] addClientMovieHistoricRows(int movieId) {
         Movie movie = findMovie(movieId);
-        Object[][] tableContents = new Object[movies.size()][6];
+        Object[][] tableContents = new Object[movies.size()][5];
         Map<Integer, Client> clientMap = rentalInfoController.getClientRentalMap();
         List<RentalInfo> rentalInfos = rentalInfoController.getRentalInfoForMovie(movie);
         
-        for (int i = 0; i < rentalInfos.size(); i++) {
-            RentalInfo rentalInfo = rentalInfos.get(i);
-            tableContents[i][0] = Integer.toString(movieId);
-            tableContents[i][1] = movie.getTitle();
-            if (movie.isRented() && clientMap.get(movieId) != null) {
-                tableContents[i][3] = clientMap.get(movieId).getName();
-            } else {
-                tableContents[i][3] = "-";
-            }
-            tableContents[i][4] = rentalInfo.outputDate(rentalInfo.getRentDate());
-            if (rentalInfo.getReturnDate() != null) {
-                tableContents[i][5] = rentalInfo.outputDate(rentalInfo.getReturnDate());
-            } else {
-                tableContents[i][5] = "";
-            }
+        if (!clientMap.isEmpty()) {
+            for (int i = 0; i < rentalInfos.size(); i++) {
+                RentalInfo rentalInfo = rentalInfos.get(i);
+                tableContents[i][0] = Integer.toString(movieId);
+                tableContents[i][1] = movie.getTitle();
+                if (movie.isRented() && clientMap.get(movieId) != null) {
+                    tableContents[i][2] = clientMap.get(movieId).getName();
+                } else {
+                    tableContents[i][2] = "-";
+                }
+                tableContents[i][3] = rentalInfo.outputDate(rentalInfo.getRentDate());
+                if (rentalInfo.getReturnDate() != null) {
+                    tableContents[i][4] = rentalInfo.outputDate(rentalInfo.getReturnDate());
+                } else {
+                    tableContents[i][4] = "";
+                }
+            }            
         }
         return tableContents;        
     }     

@@ -70,7 +70,7 @@ public class RentalInfoController implements ControllerInterface {
         );
     }
     
-    private boolean hasClientReachedLimit(int clientId) {
+    public boolean hasClientReachedLimit(int clientId) {
         int numberRented = rentalInfos
             .stream()
             .filter(e -> e.getClientId() == clientId)
@@ -119,17 +119,7 @@ public class RentalInfoController implements ControllerInterface {
                 .collect(Collectors.toList());
     }
     
-    public void rentMovie(int movieId, int clientId) {
-        if (hasClientReachedLimit(clientId)) {
-            System.out.println("User has reached max rentals");
-            return;
-        }
-        
-        if (isMovieRented(movieId)) {
-            System.out.println("Movie has been rented");
-            return;
-        }
-        
+    public void rentMovie(int movieId, int clientId) {        
         rentalInfos.add(new RentalInfo(
             ++lastId, clientId, movieId, LocalDate.now(), null
         ));

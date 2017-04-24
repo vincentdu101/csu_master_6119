@@ -60,7 +60,7 @@ public class MovieView extends JFrame implements MovieViewObserver{
     }
     
     private Object[] generateClientDateTitleRow() {
-        return new Object[] { "ID", "Title", "Active", "Rented By", "Date Rented", "Date Returned"};
+        return new Object[] { "ID", "Title", "Rented By", "Date Rented", "Date Returned"};
     }    
     
     private void selectClient(String id) {
@@ -109,9 +109,14 @@ public class MovieView extends JFrame implements MovieViewObserver{
         
         addBtn.addActionListener(new ActionListener(){
             public void actionPerformed( ActionEvent event) { 
-                String response = movieController.createMovie(text.getText(), panel, scroll);
-                status.setText(response);
-                status.setVisible(true);
+                if (!text.getText().trim().equals("")) {
+                    String response = movieController.createMovie(text.getText(), panel, scroll);
+                    status.setText(response);
+                    status.setVisible(true);
+                } else {
+                    status.setText("Name must be in valid.");
+                    status.setVisible(true);
+                }
             }
         });
 
@@ -119,19 +124,21 @@ public class MovieView extends JFrame implements MovieViewObserver{
            public void actionPerformed( ActionEvent event) {
                if (movieIdChosen != null) {
                    int id = Integer.parseInt(movieIdChosen);
+                   rentalInfoController.returnMovie(id, clientSelected.getId());  
                    movieController.returnMovie(id, panel, scroll);
-                   rentalInfoController.returnMovie(id, clientSelected.getId());                   
                }
            }
         });
         
         rentedBtn.addActionListener(new ActionListener(){
            public void actionPerformed( ActionEvent event) { 
-               movieModel.notifyTableObservers(
-                       movieController.addMovieRows(
-                               movieController.getRentedMovies()
-                       ), panel, scroll
-               );
+               if (movieIdChosen != null) {
+                    movieModel.notifyTableObservers(
+                            movieController.addMovieRows(
+                                    movieController.getRentedMovies()
+                            ), panel, scroll
+                    );
+               }
            }
         });
 
@@ -148,10 +155,12 @@ public class MovieView extends JFrame implements MovieViewObserver{
         
         viewPastRentals.addActionListener(new ActionListener(){
            public void actionPerformed( ActionEvent event) { 
-               int id = Integer.parseInt(movieIdChosen);
-               removeView(panel, scroll);
-               createView(movieController.addClientMovieHistoricRows(id), 
-                       generateClientDateTitleRow());
+               if (movieIdChosen != null) {
+                    int id = Integer.parseInt(movieIdChosen);
+                    removeView(panel, scroll);
+                    createView(movieController.addClientMovieHistoricRows(id), 
+                            generateClientDateTitleRow());
+               }
            }
         });        
         
@@ -163,9 +172,22 @@ public class MovieView extends JFrame implements MovieViewObserver{
         
         rentBtn.addActionListener(new ActionListener(){
            public void actionPerformed( ActionEvent event) { 
-               int id = Integer.parseInt(movieIdChosen);
-               movieController.rentMovie(id, panel, scroll); 
-               rentalInfoController.rentMovie(id, clientSelected.getId());
+               if (movieIdChosen != null) {
+                    int id = Integer.parseInt(movieIdChosen);
+                   
+                    if (!rentalInfoController.hasClientReachedLimit(clientSelected.getId()) &&
+                          !rentalInfoController.isMovieRented(Integer.parseInt(movieIdChosen))) {
+                          rentalInfoController.rentMovie(id, clientSelected.getId());  
+                          movieController.rentMovie(id, panel, scroll); 
+                     } else if (rentalInfoController.hasClientReachedLimit(clientSelected.getId())){
+                         status.setText("Client reached limit of 3 rentals.");
+                         status.setVisible(true);
+                     } 
+                     else if (rentalInfoController.isMovieRented(id)){
+                         status.setText("Movie already rented.");
+                         status.setVisible(true);                   
+                     }                   
+               } 
            }
         });
         
@@ -174,6 +196,7 @@ public class MovieView extends JFrame implements MovieViewObserver{
             panel.add(clientChosenLabel);
         }        
         panel.add(text);
+        panel.add(status);
         panel.add(rentedBtn);
         panel.add(viewPastRentals);
         panel.add(allBtn);
@@ -187,8 +210,7 @@ public class MovieView extends JFrame implements MovieViewObserver{
     private void addPanel(JScrollPane scroll) {
         JPanel panel = new JPanel();
         JTextField text = new JTextField(10);
-        status.setVisible(false);
-        panel.add(status);        
+        status.setVisible(false);        
         addButtons(text, panel, scroll);
         add(panel);
     }
@@ -212,5 +234,4 @@ public class MovieView extends JFrame implements MovieViewObserver{
         this.clientSelected = client;
         initUI();
     }
-    
 }
