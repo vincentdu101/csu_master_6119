@@ -1,0 +1,13 @@
+#BlueJ class context
+comment0.target=BasePlusCommissionEmployee
+comment1.params=first\ last\ ssn\ sales\ rate\ salary
+comment1.target=BasePlusCommissionEmployee(java.lang.String,\ java.lang.String,\ java.lang.String,\ double,\ double,\ double)
+comment2.params=salary
+comment2.target=void\ setBaseSalary(double)
+comment3.params=
+comment3.target=double\ getBaseSalary()
+comment4.params=
+comment4.target=double\ earnings()
+comment5.params=
+comment5.target=java.lang.String\ toString()
+numComments=6
