@@ -12,7 +12,7 @@ package trainapp;
 public abstract class Seat {
 
     boolean taken = false;
-    String description = "Seat for someone to sit in.";
+    String description = "Seat for someone to sit i n.";
     
     public String getDescription() {
         return description;

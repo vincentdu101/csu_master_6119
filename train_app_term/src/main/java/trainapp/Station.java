@@ -6,46 +6,79 @@
 package trainapp;
 
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Date;
+import java.util.Map;
 
 /**
  *
  * @author vincentdu
  */
-public abstract class Station {
+public class Station {
 
-    private Integer id;
-    private String description = "Train Station";
-    boolean trainStationed = false;
-    Station nextNorthStation;
-    Station nextSouthStation;
-    List<Monitor> monitors;
-    
+    Integer id;
+    String description = "Train Station";
+    Integer nextNorthStationId;
+    Integer nextSouthStationId;
+    Date createdAt;
+    Date modifiedAt;
+
+    public Station() {}
+
+    public Station(Integer id,
+                   String description,
+                   Integer nextNorthStationId,
+                   Integer nextSouthStationId,
+                   Date createdAt,
+                   Date modifiedAt) {
+        this.id = id;
+        this.description = description;
+        this.nextNorthStationId = nextNorthStationId;
+        this.nextSouthStationId = nextSouthStationId;
+        this.createdAt = createdAt;
+        this.modifiedAt = modifiedAt;
+    }
+
     public String getDescription() {
         return description;
     }
     
-    public Station getNextNorthStation() {
-        return nextNorthStation;
+    public Integer getNextNorthStationId() {
+        return nextNorthStationId;
     }
     
-    public Station getNextSouthStation() {
-        return nextSouthStation;
+    public Integer getNextSouthStationId() {
+        return nextSouthStationId;
+    }
+
+    public void setNextNorthStationId(Integer nextNorthStationId) {
+        this.nextNorthStationId = nextNorthStationId;
     }
     
-    public void setNextNorthStation(Station nextNorthStation) {
-        this.nextNorthStation = nextNorthStation;
+    public void setNextSouthStationId(Integer nextSouthStationId) {
+        this.nextSouthStationId = nextSouthStationId;
     }
-    
-    public void setNextSouthStation(Station nextSouthStation) {
-        this.nextSouthStation = nextSouthStation;
-    }   
-    
-    public abstract void trainArrived();
-    
-    public abstract void trainLeft();
-    
-    public abstract void trainNotification();
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public Date getModifiedAt() {
+        return modifiedAt;
+    }
+
+    public void loadStation(Station station) {
+        this.id = station.getId();
+        this.description = station.getDescription();
+        this.nextNorthStationId = station.getNextNorthStationId();
+        this.nextSouthStationId = station.getNextSouthStationId();
+        this.createdAt = station.getCreatedAt();
+        this.modifiedAt = station.getModifiedAt();
+    }
 
     public Integer getId() {
         return id;

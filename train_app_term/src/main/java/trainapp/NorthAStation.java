@@ -5,10 +5,36 @@
  */
 package trainapp;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+
+import java.util.List;
+
 /**
  *
  * @author vincentdu
  */
-public class NorthAStation {
-    
+public class NorthAStation extends Station {
+
+    @Autowired
+    JdbcTemplate jdbcTemplate;
+    List<Monitor> monitors;
+    StationService stationService;
+    boolean trainStationed = false;
+
+    public NorthAStation(StationService stationService) {
+        this.stationService = stationService;
+        setupStation();
+    }
+
+    public void setupStation() {
+        Station currentStation = stationService.findStationByDescription("North A Station");
+        this.loadStation(currentStation);
+    }
+
+//    public abstract void trainArrived();
+//
+//    public abstract void trainLeft();
+//
+//    public abstract void trainNotification();
 }

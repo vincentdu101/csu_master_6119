@@ -5,8 +5,14 @@
  */
 package trainapp;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Date;
 
 /**
  *
@@ -16,13 +22,18 @@ public class Train {
 
     private Integer id;
 
-    private String description;
-    private String name;
+    String description;
+    String name;
     List<Seat> seats;
-    private Station startingStation;
+    Station startingStation;
     Station currentStation;
     List<Monitor> monitors;
     TrainState trainState = TrainState.STOPPED;
+    Date created_at;
+    Date modified_at;
+
+    @Autowired
+    JdbcTemplate jdbcTemplate;
     
     public void setupSeats() {
         seats = new ArrayList<>();
@@ -38,6 +49,18 @@ public class Train {
         for (int i = 0; i < 4; i++) {
             seats.add(new TableSeat());
         }
+    }
+
+    public void create() {
+        String SQL = "INSERT INTO station (description, next_north_station_id, next_south_station_id) " +
+                "VALUES (:description, :next_north_station_id, :next_south_station_id)";
+        Map namedParameters = new HashMap();
+        namedParameters.put("name", this.name);
+        namedParameters.put("description", this.description);
+        namedParameters.put("start_station_id", 1);
+        namedParameters.put("create_at", new Date());
+        namedParameters.put("modified_at", new Date());
+        jdbcTemplate.update(SQL, namedParameters);
     }
     
     public void linkToStartingStation(Station startingStation) {
@@ -64,10 +87,6 @@ public class Train {
 
     public String getDescription() {
         return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public String getName() {

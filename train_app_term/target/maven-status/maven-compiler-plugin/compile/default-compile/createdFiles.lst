@@ -8,6 +8,7 @@ trainapp/NorthBTrain.class
 trainapp/SouthBTrain.class
 hello/WebSocketConfig.class
 trainapp/Direction.class
+trainapp/StationService.class
 trainapp/TrainState.class
 trainapp/TrainModel.class
 trainapp/NorthATrain.class
@@ -23,5 +24,6 @@ trainapp/NorthAStation.class
 trainapp/TrainMonitor.class
 trainapp/Train.class
 hello/HelloMessage.class
+db/TrainController.class
 hello/Application.class
 trainapp/NorthCTrain.class
