@@ -10,7 +10,7 @@ package trainapp;
  * @author vincentdu
  */
 public abstract class Seat {
-    
+
     boolean taken = false;
     String description = "Seat for someone to sit in.";
     
@@ -21,5 +21,7 @@ public abstract class Seat {
     public abstract boolean isTaken();
     
     public abstract void setTaken(boolean taken);
+
+    public abstract void setDescription(String description);
     
 }

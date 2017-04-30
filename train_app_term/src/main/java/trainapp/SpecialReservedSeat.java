@@ -10,8 +10,7 @@ package trainapp;
  * @author vdu
  */
 public class SpecialReservedSeat extends Seat {
-    
-    Seat seat;
+
     boolean taken;
     
     public SpecialReservedSeat() {
@@ -28,5 +27,9 @@ public class SpecialReservedSeat extends Seat {
     public void setTaken(boolean taken) {
         this.taken = taken;
     }
-    
+
+    @Override
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }

@@ -10,8 +10,7 @@ package trainapp;
  * @author vdu
  */
 public class RegularSeat extends Seat {
-    
-    Seat seat;
+
     boolean taken;
     
     public RegularSeat() {
@@ -27,6 +26,11 @@ public class RegularSeat extends Seat {
     @Override 
     public void setTaken(boolean taken) {
         this.taken = taken;
+    }
+
+    @Override
+    public void setDescription(String description) {
+        this.description = description;
     }
     
 }

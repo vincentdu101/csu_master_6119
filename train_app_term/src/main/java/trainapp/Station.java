@@ -5,6 +5,7 @@
  */
 package trainapp;
 
+
 import java.util.List;
 
 /**
@@ -12,8 +13,9 @@ import java.util.List;
  * @author vincentdu
  */
 public abstract class Station {
-    
-    String description = "Train Station";
+
+    private Integer id;
+    private String description = "Train Station";
     boolean trainStationed = false;
     Station nextNorthStation;
     Station nextSouthStation;
@@ -44,5 +46,12 @@ public abstract class Station {
     public abstract void trainLeft();
     
     public abstract void trainNotification();
-    
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 }
