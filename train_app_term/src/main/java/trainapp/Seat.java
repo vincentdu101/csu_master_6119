@@ -5,18 +5,33 @@
  */
 package trainapp;
 
+import java.util.Date;
+
 /**
  *
  * @author vincentdu
  */
 public abstract class Seat {
 
+    Date createdAt;
+    Date modifiedAt;
     boolean taken = false;
     String description = "Seat for someone to sit i n.";
+    SeatType seatType;
     
     public String getDescription() {
         return description;
     }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public Date getModifiedAt() {
+        return modifiedAt;
+    }
+
+    public SeatType getSeatType() { return seatType; }
     
     public abstract boolean isTaken();
     

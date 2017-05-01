@@ -29,12 +29,17 @@ public class Train {
     Station currentStation;
     TrainMonitor trainMonitor;
     TrainState trainState = TrainState.STOPPED;
+    SeatService seatService;
     Date created_at;
     Date modified_at;
     Direction direction;
 
     @Autowired
     JdbcTemplate jdbcTemplate;
+
+    public Train() {
+
+    }
 
     private void updateDirection() {
         if (direction.equals(Direction.NORTH) && currentStation.getNextNorthStationId() == null) {
@@ -46,17 +51,17 @@ public class Train {
 
     public void setupSeats() {
         seats = new ArrayList<>();
-        
+
         for (int i = 0; i < 6; i++) {
-            seats.add(new SpecialReservedSeat());
+            seats.add(seatService.create(this, new SpecialReservedSeat()));
         }
-        
+
         for (int i = 0; i < 10; i++) {
-            seats.add(new RegularSeat());
+            seats.add(seatService.create(this, new RegularSeat()));
         }
-        
+
         for (int i = 0; i < 4; i++) {
-            seats.add(new TableSeat());
+            seats.add(seatService.create(this, new TableSeat()));
         }
     }
 

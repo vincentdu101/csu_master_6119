@@ -75,6 +75,7 @@ public class Application implements CommandLineRunner {
         jdbcTemplate.execute("CREATE TABLE seat(" +
                 "id SERIAL, description VARCHAR(255), taken bool, " +
                 "train_id SMALLINT UNSIGNED NOT NULL, " +
+                "seat_type VARCHAR(255), " +
                 "created_at datetime, " +
                 "modified_at datetime)");
     }

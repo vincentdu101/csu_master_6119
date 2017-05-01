@@ -10,13 +10,11 @@ package trainapp;
  * @author vdu
  */
 public class TableSeat extends Seat {
-    private Integer id;
 
-    boolean taken;
-    
     public TableSeat() {
         this.taken = false;
         this.description = "Table seat";
+        this.seatType = SeatType.TABLE_SEAT;
     }
     
     @Override
@@ -27,14 +25,6 @@ public class TableSeat extends Seat {
     @Override 
     public void setTaken(boolean taken) {
         this.taken = taken;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     @Override

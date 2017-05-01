@@ -10,12 +10,11 @@ package trainapp;
  * @author vdu
  */
 public class SpecialReservedSeat extends Seat {
-
-    boolean taken;
     
     public SpecialReservedSeat() {
         this.taken = false;
         this.description = "Special Reserved seat";
+        this.seatType = SeatType.SPECIAL_RESERVED_SEAT;
     }
     
     @Override

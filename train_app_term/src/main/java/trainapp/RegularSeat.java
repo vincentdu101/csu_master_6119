@@ -10,12 +10,11 @@ package trainapp;
  * @author vdu
  */
 public class RegularSeat extends Seat {
-
-    boolean taken;
     
     public RegularSeat() {
         this.taken = false;
         this.description = "Regular seat";
+        this.seatType = SeatType.REGULAR_SEAT;
     }
     
     @Override
