@@ -5,14 +5,7 @@
  */
 package trainapp;
 
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-
-import java.util.HashMap;
-import java.util.List;
 import java.util.Date;
-import java.util.Map;
 
 /**
  *
@@ -26,8 +19,15 @@ public class Station {
     Integer nextSouthStationId;
     Date createdAt;
     Date modifiedAt;
+    StationMonitor stationMonitor;
+    StationService stationService;
+    TrainMonitor trainMonitor;
+    TrainStationProgressService trainStationProgressService;
+    Boolean trainStationed = false;
+    Train currentTrain;
 
-    public Station() {}
+
+    public Station(){}
 
     public Station(Integer id,
                    String description,
@@ -55,13 +55,37 @@ public class Station {
         return nextSouthStationId;
     }
 
-    public void setNextNorthStationId(Integer nextNorthStationId) {
-        this.nextNorthStationId = nextNorthStationId;
+    public Station getNextStation(Direction direction) {
+        if (direction.equals(Direction.NORTH)) {
+            return stationService.findStationById(nextNorthStationId);
+        } else {
+            return stationService.findStationById(nextSouthStationId);
+        }
     }
-    
-    public void setNextSouthStationId(Integer nextSouthStationId) {
-        this.nextSouthStationId = nextSouthStationId;
+
+    public void setupStation(String description) {
+        Station currentStation = stationService.findStationByDescription(description);
+        trainMonitor.addStation(this);
+        loadStation(currentStation);
     }
+
+    public void trainArrived(Train train) {
+        trainStationed = true;
+        currentTrain = train;
+        trainStationProgressService.create(currentTrain, this.id);
+        trainNotification(StationState.TRAIN_ARRIVED);
+    }
+
+    public void trainLeft() {
+        trainStationed = false;
+        currentTrain = null;
+        trainStationProgressService.delete(this.id);
+        trainNotification(StationState.TRAIN_LEFT);
+    }
+
+    public void trainNotification(StationState stationState) {
+        stationMonitor.update(stationState);
+    };
 
     public Date getCreatedAt() {
         return createdAt;
@@ -72,12 +96,12 @@ public class Station {
     }
 
     public void loadStation(Station station) {
-        this.id = station.getId();
-        this.description = station.getDescription();
-        this.nextNorthStationId = station.getNextNorthStationId();
-        this.nextSouthStationId = station.getNextSouthStationId();
-        this.createdAt = station.getCreatedAt();
-        this.modifiedAt = station.getModifiedAt();
+        id = station.getId();
+        description = station.getDescription();
+        nextNorthStationId = station.getNextNorthStationId();
+        nextSouthStationId = station.getNextSouthStationId();
+        createdAt = station.getCreatedAt();
+        modifiedAt = station.getModifiedAt();
     }
 
     public Integer getId() {

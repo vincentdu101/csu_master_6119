@@ -12,24 +12,31 @@ import java.util.List;
  *
  * @author vincentdu
  */
-public class TrainMonitor implements Monitor {
-    
-    TrainState trainState;
+public class TrainMonitor {
+
     List<Train> trains;
+    List<Station> stations;
     
     public TrainMonitor() {
-        trainState = TrainState.STOPPED;
         trains = new ArrayList<>();
     }
-    
-    @Override 
-    public void update(TrainState newTrainState) {
-        trainState = newTrainState;
+
+    public void update(Train train, TrainState newTrainState) {
+        if (newTrainState.equals(TrainState.STARTED)) {
+            train.getCurrentStation().trainLeft();
+        } else if (newTrainState.equals(TrainState.STOPPED)){
+            train.getCurrentStation()
+                    .getNextStation(train.getDirection())
+                    .trainArrived(train);
+        }
     }
-    
-    @Override 
+
     public void addTrain(Train train) {
         trains.add(train);
     }
-    
+
+    public void addStation(Station station) {
+        stations.add(station);
+    }
+
 }

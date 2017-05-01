@@ -5,6 +5,7 @@ trainapp/SouthATrain.class
 trainapp/TableSeat.class
 trainapp/SpecialReservedSeat.class
 trainapp/NorthBTrain.class
+trainapp/TrainStationProgressService.class
 trainapp/SouthBTrain.class
 hello/WebSocketConfig.class
 trainapp/Direction.class
@@ -26,4 +27,6 @@ trainapp/Train.class
 hello/HelloMessage.class
 db/TrainController.class
 hello/Application.class
+trainapp/StationState.class
 trainapp/NorthCTrain.class
+trainapp/StationMonitor.class

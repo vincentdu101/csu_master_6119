@@ -10,9 +10,17 @@ package trainapp;
  * @author vdu
  */
 public class SouthATrain extends Train {
-    
-    public SouthATrain() {
-        
+
+    public SouthATrain(TrainMonitor trainMonitor) {
+        this.trainMonitor = trainMonitor;
+        createTrain();
+    }
+
+    public void createTrain() {
+        this.name = "South A Station";
+        this.description = "South A Station";
+        this.direction = Direction.NORTH;
+        this.create();
     }
     
 }

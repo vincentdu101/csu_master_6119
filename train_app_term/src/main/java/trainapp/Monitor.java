@@ -11,8 +11,12 @@ package trainapp;
  */
 public interface Monitor {
     
-    public void update(TrainState trainState);
+    public void trainUpdate(TrainState trainState);
     
     public void addTrain(Train train);
+
+    public void stationUpdate(Train train, StationState stationState);
+
+    public void addStation(Station station);
     
 }

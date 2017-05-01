@@ -27,14 +27,23 @@ public class Train {
     List<Seat> seats;
     Station startingStation;
     Station currentStation;
-    List<Monitor> monitors;
+    TrainMonitor trainMonitor;
     TrainState trainState = TrainState.STOPPED;
     Date created_at;
     Date modified_at;
+    Direction direction;
 
     @Autowired
     JdbcTemplate jdbcTemplate;
-    
+
+    private void updateDirection() {
+        if (direction.equals(Direction.NORTH) && currentStation.getNextNorthStationId() == null) {
+            direction = Direction.SOUTH;
+        } else if (direction.equals(Direction.SOUTH) && currentStation.getNextSouthStationId() == null) {
+            direction = Direction.NORTH;
+        }
+    }
+
     public void setupSeats() {
         seats = new ArrayList<>();
         
@@ -66,23 +75,40 @@ public class Train {
     public void linkToStartingStation(Station startingStation) {
         this.startingStation = startingStation;
     }
-    
-    public void addMonitor(Monitor monitor) {
-        monitor.addTrain(this);
-        monitors.add(monitor);
+
+    public void arrivedAtStationProcess() {
+        stopTrain();
+        trainMonitor.update(this, trainState);
     }
     
     public void startTrain() {
-        trainState = TrainState.STARTED;
-        monitors.forEach(m -> m.update(trainState));
+        try {
+            trainState = TrainState.STARTED;
+            trainMonitor.update(this, trainState);
+            Thread.sleep(10000);
+            arrivedAtStationProcess();
+        } catch(Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
+
+    public void stopTrain() {
+        try {
+            trainState = TrainState.STOPPED;
+            trainMonitor.update(this, trainState);
+            updateDirection();
+            Thread.sleep(3000);
+        } catch(Exception ex) {
+            System.out.println(ex.getMessage());
+        }
     }
 
     public Integer getId() {
         return id;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public Direction getDirection() {
+        return direction;
     }
 
     public String getDescription() {
@@ -92,6 +118,8 @@ public class Train {
     public String getName() {
         return name;
     }
+
+    public Station getCurrentStation() { return currentStation; }
 
     public void setName(String name) {
         this.name = name;

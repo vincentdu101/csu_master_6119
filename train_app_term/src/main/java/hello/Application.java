@@ -40,23 +40,6 @@ public class Application implements CommandLineRunner {
         setupTables();
         setupStations();
 //        setupTrains();
-
-        // Split up the array of whole names into an array of first/last names
-//        List<Object[]> splitUpNames = Arrays.asList("John Woo", "Jeff Dean", "Josh Bloch", "Josh Long").stream()
-//                .map(name -> name.split(" "))
-//                .collect(Collectors.toList());
-
-        // Use a Java 8 stream to print out each tuple of the list
-//        splitUpNames.forEach(name -> log.info(String.format("Inserting customer record for %s %s", name[0], name[1])));
-
-        // Uses JdbcTemplate's batchUpdate operation to bulk load data
-//        jdbcTemplate.batchUpdate("INSERT INTO customers(first_name, last_name) VALUES (?,?)", splitUpNames);
-
-//        log.info("Querying for customer records where first_name = 'Josh':");
-//        jdbcTemplate.query(
-//                "SELECT id, first_name, last_name FROM customers WHERE first_name = ?", new Object[] { "Josh" },
-//                (rs, rowNum) -> new Customer(rs.getLong("id"), rs.getString("first_name"), rs.getString("last_name"))
-//        ).forEach(customer -> log.info(customer.toString()));
     }
 
     public void setupTables() {
@@ -73,10 +56,11 @@ public class Application implements CommandLineRunner {
                 "modified_at datetime)");
 
         jdbcTemplate.execute("DROP table if exists train_progress");
-        jdbcTemplate.execute("CREATE TABLE train_progress(" +
-                "id SERIAL, name VARCHAR(255), description VARCHAR(255), " +
-                "current_station_id SMALLINT UNSIGNED, " +
+        jdbcTemplate.execute("CREATE TABLE train_service_progress(" +
+                "id SERIAL, " +
+                "station_id SMALLINT UNSIGNED, " +
                 "train_id SMALLINT UNSIGNED NOT NULL REFERENCES train(id), " +
+                "active bool, " +
                 "created_at datetime, " +
                 "modified_at datetime)");
 

@@ -10,18 +10,22 @@ package trainapp;
  * @author vdu
  */
 public class SouthTrainFactory extends TrainFactory {
-    
+
+    public SouthTrainFactory(TrainMonitor monitor, TrainStationProgressService trainStationProgressService) {
+        super(monitor, trainStationProgressService);
+    }
+
     private Train train; 
     private Direction direction = Direction.SOUTH;
     
     @Override 
     public Train createTrain(TrainModel model) {
         if (model.equals(TrainModel.A)) {
-            train = new SouthATrain();
+            train = new SouthATrain(monitor);
         } else if (model.equals(TrainModel.B)) {
-            train = new SouthBTrain();
+            train = new SouthBTrain(monitor);
         } else if (model.equals(TrainModel.C)) {
-            train = new SouthCTrain();
+            train = new SouthCTrain(monitor);
         }
         
         return train;
