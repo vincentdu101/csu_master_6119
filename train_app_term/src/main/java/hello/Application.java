@@ -55,7 +55,7 @@ public class Application implements CommandLineRunner {
                 "created_at datetime, " +
                 "modified_at datetime)");
 
-        jdbcTemplate.execute("DROP table if exists train_progress");
+        jdbcTemplate.execute("DROP table if exists train_service_progress");
         jdbcTemplate.execute("CREATE TABLE train_service_progress(" +
                 "id SERIAL, " +
                 "station_id SMALLINT UNSIGNED, " +

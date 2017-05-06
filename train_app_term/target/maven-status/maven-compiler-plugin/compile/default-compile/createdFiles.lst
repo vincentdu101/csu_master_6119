@@ -1,4 +1,5 @@
 hello/Greeting.class
+trainapp/SeatType.class
 trainapp/Station.class
 trainapp/TrainFactory.class
 trainapp/SouthATrain.class
@@ -16,6 +17,7 @@ trainapp/NorthATrain.class
 hello/GreetingController.class
 trainapp/SouthTrainFactory.class
 trainapp/NorthTrainFactory.class
+hello/StationController.class
 trainapp/SouthCTrain.class
 hello/Customer.class
 trainapp/Seat.class
@@ -24,6 +26,7 @@ trainapp/Monitor.class
 trainapp/NorthAStation.class
 trainapp/TrainMonitor.class
 trainapp/Train.class
+trainapp/SeatService.class
 hello/HelloMessage.class
 db/TrainController.class
 hello/Application.class
