@@ -5,20 +5,24 @@
  */
 package trainapp;
 
-import java.util.Date;
+import services.StationService;
+import services.TrainStationProgressService;
+
+import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  *
  * @author vincentdu
  */
-public class Station {
+public class Station implements Serializable {
 
     Integer id;
     String description = "Train Station";
     Integer nextNorthStationId;
     Integer nextSouthStationId;
-    Date createdAt;
-    Date modifiedAt;
+    LocalDateTime createdAt;
+    LocalDateTime modifiedAt;
     StationMonitor stationMonitor;
     StationService stationService;
     TrainMonitor trainMonitor;
@@ -33,8 +37,8 @@ public class Station {
                    String description,
                    Integer nextNorthStationId,
                    Integer nextSouthStationId,
-                   Date createdAt,
-                   Date modifiedAt) {
+                   LocalDateTime createdAt,
+                   LocalDateTime modifiedAt) {
         this.id = id;
         this.description = description;
         this.nextNorthStationId = nextNorthStationId;
@@ -46,7 +50,27 @@ public class Station {
     public String getDescription() {
         return description;
     }
-    
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setNextNorthStationId(Integer nextNorthStationId) {
+        this.nextNorthStationId = nextNorthStationId;
+    }
+
+    public void setNextSouthStationId(Integer nextSouthStationId) {
+        this.nextSouthStationId = nextSouthStationId;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public void setModifiedAt(LocalDateTime modifiedAt) {
+        this.modifiedAt = modifiedAt;
+    }
+
     public Integer getNextNorthStationId() {
         return nextNorthStationId;
     }
@@ -69,29 +93,11 @@ public class Station {
         loadStation(currentStation);
     }
 
-    public void trainArrived(Train train) {
-        trainStationed = true;
-        currentTrain = train;
-        trainStationProgressService.create(currentTrain, this.id);
-        trainNotification(StationState.TRAIN_ARRIVED);
-    }
-
-    public void trainLeft() {
-        trainStationed = false;
-        currentTrain = null;
-        trainStationProgressService.delete(this.id);
-        trainNotification(StationState.TRAIN_LEFT);
-    }
-
-    public void trainNotification(StationState stationState) {
-        stationMonitor.update(stationState);
-    };
-
-    public Date getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public Date getModifiedAt() {
+    public LocalDateTime getModifiedAt() {
         return modifiedAt;
     }
 
@@ -108,7 +114,8 @@ public class Station {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void
+    setId(Integer id){
         this.id = id;
     }
 }

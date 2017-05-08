@@ -5,29 +5,38 @@
  */
 package trainapp;
 
+import services.SeatService;
+import services.StationService;
+import services.TrainService;
+import services.TrainStationProgressService;
+
 /**
  *
  * @author vdu
  */
 public class NorthTrainFactory extends TrainFactory {
 
-    public NorthTrainFactory(TrainMonitor monitor, TrainStationProgressService trainStationProgressService) {
-        super(monitor, trainStationProgressService);
+    public NorthTrainFactory(TrainStationProgressService trainStationProgressService,
+                             TrainService trainService,
+                             StationService stationService,
+                             SeatService seatService) {
+        super(trainStationProgressService, trainService, stationService, seatService);
+        trainIterator = new TrainIterator();
     }
-
-    private Train train;
-    private Direction direction = Direction.NORTH;
     
     @Override 
-    public Train createTrain(TrainModel model) {
+    public Train createTrain(TrainModel model, Station startingStation) {
+        Train train = new Train();
         if (model.equals(TrainModel.A)) {
-            train = new NorthATrain(monitor);
+            train = new NorthATrain(startingStation);
         } else if (model.equals(TrainModel.B)) {
-            train = new NorthBTrain(monitor);
+            train = new NorthBTrain(startingStation);
         } else if (model.equals(TrainModel.C)) {
-            train = new NorthCTrain(monitor);
+            train = new NorthCTrain(startingStation);
         }
-        
+
+        train.setId(trainService.create(train));
+
         return train;
     }
     

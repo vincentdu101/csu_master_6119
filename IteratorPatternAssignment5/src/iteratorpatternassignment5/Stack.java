@@ -7,14 +7,16 @@ package iteratorpatternassignment5;
 
 /**
  *
- * @author vincentdu
+ * @author vdu
  */
 public interface Stack {
     
-    public void pop();
+    public String pop(int position);
     
-    public void push();
+    public String push(int position, String element);
     
     public void clear();
+    
+    public int size();
     
 }

@@ -1,5 +1,5 @@
 $(function () {
-    StompClient.init();
+    StompClient.init(Stations.update, Trains.update, Seats.update);
 
 
 });

@@ -22,13 +22,13 @@ public class TrainMonitor {
     }
 
     public void update(Train train, TrainState newTrainState) {
-        if (newTrainState.equals(TrainState.STARTED)) {
-            train.getCurrentStation().trainLeft();
-        } else if (newTrainState.equals(TrainState.STOPPED)){
-            train.getCurrentStation()
-                    .getNextStation(train.getDirection())
-                    .trainArrived(train);
-        }
+//        if (newTrainState.equals(TrainState.STARTED)) {
+//            train.getCurrentStation().trainLeft();
+//        } else if (newTrainState.equals(TrainState.STOPPED)){
+//            train.getCurrentStation()
+//                    .getNextStation(train.getDirection())
+//                    .trainArrived(train);
+//        }
     }
 
     public void addTrain(Train train) {

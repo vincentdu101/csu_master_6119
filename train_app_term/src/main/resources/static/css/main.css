@@ -29,7 +29,8 @@ text {
     line-height: 1;
     font-weight: bold;
     padding: 12px;
-    background: black;
+    background: white;
+    border: 1px solid black;
     color: #fff;
     border-radius: 2px;
     opacity: 0.001%;

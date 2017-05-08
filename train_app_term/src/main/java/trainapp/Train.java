@@ -5,14 +5,7 @@
  */
 package trainapp;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  *
@@ -24,88 +17,36 @@ public class Train {
 
     String description;
     String name;
-    List<Seat> seats;
-    Station startingStation;
+    Integer startingStationId;
     Station currentStation;
-    TrainMonitor trainMonitor;
+    private TrainStationProgress trainStationProgress;
     TrainState trainState = TrainState.STOPPED;
-    SeatService seatService;
-    Date created_at;
-    Date modified_at;
+    LocalDateTime createdAt;
+    LocalDateTime modifiedAt;
     Direction direction;
-
-    @Autowired
-    JdbcTemplate jdbcTemplate;
 
     public Train() {
 
     }
 
-    private void updateDirection() {
-        if (direction.equals(Direction.NORTH) && currentStation.getNextNorthStationId() == null) {
-            direction = Direction.SOUTH;
-        } else if (direction.equals(Direction.SOUTH) && currentStation.getNextSouthStationId() == null) {
-            direction = Direction.NORTH;
-        }
-    }
-
-    public void setupSeats() {
-        seats = new ArrayList<>();
-
-        for (int i = 0; i < 6; i++) {
-            seats.add(seatService.create(this, new SpecialReservedSeat()));
-        }
-
-        for (int i = 0; i < 10; i++) {
-            seats.add(seatService.create(this, new RegularSeat()));
-        }
-
-        for (int i = 0; i < 4; i++) {
-            seats.add(seatService.create(this, new TableSeat()));
-        }
-    }
-
-    public void create() {
-        String SQL = "INSERT INTO station (description, next_north_station_id, next_south_station_id) " +
-                "VALUES (:description, :next_north_station_id, :next_south_station_id)";
-        Map namedParameters = new HashMap();
-        namedParameters.put("name", this.name);
-        namedParameters.put("description", this.description);
-        namedParameters.put("start_station_id", 1);
-        namedParameters.put("create_at", new Date());
-        namedParameters.put("modified_at", new Date());
-        jdbcTemplate.update(SQL, namedParameters);
+    public Train(Integer id,
+                   String name,
+                   String description,
+                   Integer startingStationId,
+                   String trainStateValue,
+                   LocalDateTime createdAt,
+                   LocalDateTime modifiedAt) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.trainState = TrainState.findTrainState(trainStateValue);
+        this.startingStationId = startingStationId;
+        this.createdAt = createdAt;
+        this.modifiedAt = modifiedAt;
     }
     
     public void linkToStartingStation(Station startingStation) {
-        this.startingStation = startingStation;
-    }
-
-    public void arrivedAtStationProcess() {
-        stopTrain();
-        trainMonitor.update(this, trainState);
-    }
-    
-    public void startTrain() {
-        try {
-            trainState = TrainState.STARTED;
-            trainMonitor.update(this, trainState);
-            Thread.sleep(10000);
-            arrivedAtStationProcess();
-        } catch(Exception ex) {
-            System.out.println(ex.getMessage());
-        }
-    }
-
-    public void stopTrain() {
-        try {
-            trainState = TrainState.STOPPED;
-            trainMonitor.update(this, trainState);
-            updateDirection();
-            Thread.sleep(3000);
-        } catch(Exception ex) {
-            System.out.println(ex.getMessage());
-        }
+        this.startingStationId = startingStation.getId();
     }
 
     public Integer getId() {
@@ -124,9 +65,35 @@ public class Train {
         return name;
     }
 
-    public Station getCurrentStation() { return currentStation; }
+    public Integer getStartingStationId() { return startingStationId; }
+
+    public Station getCurrentStation() {
+        return currentStation;
+    }
+
+    public TrainState getTrainState() { return trainState; }
+
+    public void setTrainState(TrainState trainState) {
+        this.trainState = trainState;
+    }
+
+    public void setCurrentStation(Station currentStation) {
+        this.currentStation = currentStation;
+    }
+
+    public TrainStationProgress getTrainStationProgress() {
+        return trainStationProgress;
+    }
+
+    public void setTrainStationProgress(TrainStationProgress trainStationProgress) {
+        this.trainStationProgress = trainStationProgress;
+    }
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 }

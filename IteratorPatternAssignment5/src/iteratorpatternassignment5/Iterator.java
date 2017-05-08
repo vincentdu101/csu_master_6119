@@ -7,14 +7,16 @@ package iteratorpatternassignment5;
 
 /**
  *
- * @author vincentdu
+ * @author vdu
  */
 public interface Iterator {
     
-    public Stack hasNext();
+    public boolean hasNext();
     
-    public Stack next();
+    public String next();
     
-    public Stack remove();
+    public void remove();
+    
+    public void add(String item);
     
 }

@@ -7,27 +7,43 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.context.ApplicationContext;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-import org.springframework.jdbc.core.JdbcTemplate;
+import java.util.*;
+
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
+import services.*;
+import trainapp.*;
 
 @SpringBootApplication
 public class Application implements CommandLineRunner {
 
     private static final Logger log = LoggerFactory.getLogger(Application.class);
-
     public static void main(String args[]) {
         SpringApplication.run(Application.class, args);
     }
 
+    private StationController stationController;
+    private TrainController trainController;
+    private StationService stationService;
+    private TrainMonitor trainMonitor;
+    private TrainStationProgressService trainStationProgressService;
+    private TrainService trainService;
+    private SeatService seatService;
+    private TrainFactory northFactory;
+    private TrainFactory southFactory;
+
     @Autowired
     JdbcTemplate jdbcTemplate;
 
+    @Autowired
+    ApplicationContext context;
+
     @Override
     public void run(String... strings) throws Exception {
+        stationController = (StationController) context.getBean("stationController");
+        trainController = (TrainController) context.getBean("trainController");
+
         SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
         dataSource.setDriver(new com.mysql.jdbc.Driver());
         dataSource.setUrl("jdbc:mysql://localhost:3306/train_app");
@@ -39,7 +55,8 @@ public class Application implements CommandLineRunner {
 
         setupTables();
         setupStations();
-//        setupTrains();
+        setupTrains();
+        startTrains();
     }
 
     public void setupTables() {
@@ -52,35 +69,41 @@ public class Application implements CommandLineRunner {
                 "id SERIAL, description VARCHAR(255), " +
                 "next_north_station_id SMALLINT UNSIGNED, " +
                 "next_south_station_id SMALLINT UNSIGNED, " +
-                "created_at datetime, " +
-                "modified_at datetime)");
+                "created_at datetime DEFAULT CURRENT_TIMESTAMP, " +
+                "modified_at datetime DEFAULT CURRENT_TIMESTAMP)");
 
-        jdbcTemplate.execute("DROP table if exists train_service_progress");
-        jdbcTemplate.execute("CREATE TABLE train_service_progress(" +
+        jdbcTemplate.execute("DROP table if exists train_station_progress");
+        jdbcTemplate.execute("CREATE TABLE train_station_progress(" +
                 "id SERIAL, " +
                 "station_id SMALLINT UNSIGNED, " +
                 "train_id SMALLINT UNSIGNED NOT NULL REFERENCES train(id), " +
                 "active bool, " +
-                "created_at datetime, " +
-                "modified_at datetime)");
+                "direction VARCHAR(255), " +
+                "created_at datetime DEFAULT CURRENT_TIMESTAMP, " +
+                "modified_at datetime DEFAULT CURRENT_TIMESTAMP)");
 
         jdbcTemplate.execute("DROP table if exists train");
         jdbcTemplate.execute("CREATE TABLE train(" +
                 "id SERIAL, name VARCHAR(255), description VARCHAR(255), " +
                 "start_station_id SMALLINT UNSIGNED NOT NULL REFERENCES station(id), " +
-                "created_at datetime, " +
-                "modified_at datetime)");
+                "train_state VARCHAR(255), " +
+                "created_at datetime DEFAULT CURRENT_TIMESTAMP, " +
+                "modified_at datetime DEFAULT CURRENT_TIMESTAMP)");
 
         jdbcTemplate.execute("DROP table if exists seat");
         jdbcTemplate.execute("CREATE TABLE seat(" +
                 "id SERIAL, description VARCHAR(255), taken bool, " +
                 "train_id SMALLINT UNSIGNED NOT NULL, " +
                 "seat_type VARCHAR(255), " +
-                "created_at datetime, " +
-                "modified_at datetime)");
+                "created_at datetime DEFAULT CURRENT_TIMESTAMP, " +
+                "modified_at datetime DEFAULT CURRENT_TIMESTAMP)");
     }
 
     public void setupStations() {
+        Map namedParameters = new HashMap();
+        namedParameters.put("created_at", new Date());
+        namedParameters.put("modified_at", new Date());
+
         jdbcTemplate.execute("insert into station(description) values('North A Station')");
         jdbcTemplate.execute("insert into station(description) values('North B Station')");
         jdbcTemplate.execute("insert into station(description) values('North C Station')");
@@ -97,11 +120,31 @@ public class Application implements CommandLineRunner {
     }
 
     public void setupTrains() {
-        jdbcTemplate.execute("insert into train (name, description, start_station_id) values('North A Train', 'North A Train', 1)");
-        jdbcTemplate.execute("insert into train (name, description, start_station_id) values('North B Train', 'North B Train', 2)");
-        jdbcTemplate.execute("insert into train (name, description, start_station_id) values('North C Train', 'North C Train', 3)");
-        jdbcTemplate.execute("insert into train (name, description, start_station_id) values('South A Train', 'South A Train', 4)");
-        jdbcTemplate.execute("insert into train (name, description, start_station_id) values('South B Train', 'South B Train', 5)");
-        jdbcTemplate.execute("insert into train (name, description, start_station_id) values('South C Train', 'South C Train', 6)");
+        northFactory = new NorthTrainFactory(trainStationProgressService, trainService, stationService, seatService);
+        southFactory = new SouthTrainFactory(trainStationProgressService, trainService, stationService, seatService);
+
+        northFactory.setStationController(stationController);
+        southFactory.setStationController(stationController);
+
+        northFactory.setTrainController(trainController);
+        southFactory.setTrainController(trainController);
+
+        northFactory.prepareTrain(TrainModel.A, StationService.findStationByDescription("North A Station"), Direction.SOUTH);
+        northFactory.prepareTrain(TrainModel.B, StationService.findStationByDescription("North B Station"), Direction.NORTH);
+        northFactory.prepareTrain(TrainModel.C, StationService.findStationByDescription("North C Station"), Direction.NORTH);
+
+        southFactory.prepareTrain(TrainModel.A, StationService.findStationByDescription("South A Station"), Direction.NORTH);
+        southFactory.prepareTrain(TrainModel.B, StationService.findStationByDescription("South B Station"), Direction.NORTH);
+        southFactory.prepareTrain(TrainModel.C, StationService.findStationByDescription("South C Station"), Direction.SOUTH);
+    }
+
+    public void startTrains() throws InterruptedException {
+        northFactory.beginTravelForAllTrains();
+        southFactory.beginTravelForAllTrains();
+
+        Thread.sleep(3000);
+
+        northFactory.beginTravelForAllTrains();
+        southFactory.beginTravelForAllTrains();
     }
 }

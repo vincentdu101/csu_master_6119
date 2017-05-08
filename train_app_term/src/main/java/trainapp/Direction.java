@@ -23,4 +23,12 @@ public enum Direction {
     public String getDirection() {
         return direction;
     }
+
+    public static Direction findDirection(String value) {
+        if (value.equals(Direction.NORTH.getDirection())) {
+            return Direction.NORTH;
+        } else {
+            return Direction.SOUTH;
+        }
+    }
 }

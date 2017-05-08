@@ -1,6 +1,8 @@
 var StompClient = (function() {
     var stompClient = null;
-
+    var stationsCallback;
+    var trainsAndSeatsCallback;
+    var seatsCallback;
 
     function setConnected(connected) {
         $("#connect").prop("disabled", connected);
@@ -25,15 +27,32 @@ var StompClient = (function() {
                 showGreeting(JSON.parse(greeting.body).content);
             });
 
-            stompClient.subscribe('/topic/allStations', function (greeting) {
-                showGreeting(JSON.parse(greeting.body).content);
+            stompClient.subscribe('/topic/allStations', function (stations) {
+                stationsCallback(JSON.parse(stations.body));
             });
 
-            stompClient.subscribe('/topic/updateStations', function (greeting) {
-                showGreeting(JSON.parse(greeting.body).content);
+            stompClient.subscribe('/topic/updateStations', function (stations) {
+                stationsCallback(JSON.parse(stations.body));
             });
 
-            stompClient.send("/app/stations/all", {}, JSON.stringify({'name': $("#name").val()}));
+            stompClient.subscribe('/topic/allTrains', function (trainsAndSeats) {
+                trainsAndSeatsCallback(JSON.parse(trainsAndSeats.body));
+            });
+
+            stompClient.subscribe('/topic/updateTrains', function (trainsAndSeats) {
+                trainsAndSeatsCallback(JSON.parse(trainsAndSeats.body));
+            });
+
+            stompClient.subscribe('/topic/allSeats', function (seats) {
+                seatsCallback(JSON.parse(seats.body));
+            });
+
+            stompClient.subscribe('/topic/updateSeats', function (seats) {
+                seatsCallback(JSON.parse(seats.body));
+            });
+
+            stompClient.send("/app/stations/all");
+            stompClient.send("/app/trains/all");
         });
     }
 
@@ -46,8 +65,8 @@ var StompClient = (function() {
     }
 
     function sendName() {
-        stompClient.send("/app/hello", {}, JSON.stringify({'name': $("#name").val()}));
-        stompClient.send("/app/stations/all", {}, JSON.stringify({'name': $("#name").val()}));
+        stompClient.send("/app/hello");
+        stompClient.send("/app/stations/all");
 //        stompClient.send("/app/stations/update", {}, JSON.stringify({'name': $("#name").val()}));
     }
 
@@ -57,7 +76,15 @@ var StompClient = (function() {
 
     return {
 
-        init: function() {
+        updateSeats: function(tableId) {
+            stompClient.send("/app/seats/all", {}, JSON.stringify({'tableId': tableId}));
+        },
+
+        init: function(stationsDone, trainsAndSeatsDone, seatsDone) {
+            stationsCallback = stationsDone;
+            trainsAndSeatsCallback = trainsAndSeatsDone;
+            seatsCallback = seatsDone;
+
             $("form").on('submit', function (e) {
                 e.preventDefault();
             });

@@ -11,16 +11,12 @@ package trainapp;
  */
 public class NorthBTrain extends Train {
 
-    public NorthBTrain(TrainMonitor trainMonitor) {
-        this.trainMonitor = trainMonitor;
-        createTrain();
-    }
-
-    public void createTrain() {
-        this.name = "North B Station";
-        this.description = "North B Station";
+    public NorthBTrain(Station startingStation) {
+        this.name = "North B Train";
+        this.description = "North B Train";
+        this.startingStationId = startingStation.getId();
+        this.trainState = TrainState.STOPPED;
         this.direction = Direction.NORTH;
-        this.create();
     }
     
 }

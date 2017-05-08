@@ -24,5 +24,15 @@ public enum TrainState {
     public String getState() {
         return state;
     }
+
+    public static TrainState findTrainState(String value) {
+        if (value.equals(TrainState.STARTED.getState())) {
+            return TrainState.STARTED;
+        } else if (value.equals(TrainState.STOPPED.getState())) {
+            return TrainState.STOPPED;
+        } else {
+            return TrainState.REPAIRING;
+        }
+    }
     
 }

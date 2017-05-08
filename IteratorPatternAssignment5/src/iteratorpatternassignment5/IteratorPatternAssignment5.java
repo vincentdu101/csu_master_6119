@@ -7,7 +7,7 @@ package iteratorpatternassignment5;
 
 /**
  *
- * @author vincentdu
+ * @author vdu
  */
 public class IteratorPatternAssignment5 {
 
@@ -16,6 +16,24 @@ public class IteratorPatternAssignment5 {
      */
     public static void main(String[] args) {
         // TODO code application logic here
+        Iterator iterator1 = new StackIterator1();
+        Iterator iterator2 = new StackIterator2();
+        
+        StackClient stackClient1 = new StackClient(iterator1);
+        StackClient stackClient2 = new StackClient(iterator2);
+        
+        iterator1.add("This");
+        iterator1.add("is");
+        iterator1.add("a");
+        iterator1.add("test");
+        
+        iterator2.add("Need");
+        iterator2.add("more");
+        iterator2.add("tests");
+        iterator2.add("!");        
+        
+        stackClient1.printStack();
+        stackClient2.printStack();
     }
     
 }
